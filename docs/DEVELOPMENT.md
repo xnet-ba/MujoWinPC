@@ -70,6 +70,15 @@ curl -s -o /dev/null -w "%{http_code}\n" localhost:8006   # 200 = noVNC živ
 docker compose -f compose/smoke.local.yml down -v        # čisti sve
 ```
 
+## noVNC automatizacija (Playwright, naučeno u smoke testu)
+
+- Miš ulazi u gosta samo **pravim klikovima** (`page.mouse`), ne sintetičkim
+  eventima; tastatura se kroz noVNC ne prosljeđuje pouzdano.
+- Control-bar ručica prekriva lijevi rub ekrana — Start dugme gađaj **desno
+  od nje** (npr. x≈28 u viewportu od 780px).
+- Otvoreni extra-keys panel prekriva Start dugme; navigacija ga resetuje.
+- Pod emulacijom svaki korak čekaj 6–10 s (render kasni).
+
 Dokazano radi: Windows 10 ISO + Setup do 86% na 12-jezgrenom hostu bez KVM-a
 (vidi `docs/screenshots/`). Izmjereno: ~200% CPU (2 emulirana jezgra),
 ~1.4 MB/s upisa na disk, faza "Getting files ready" ide desecima minuta —
