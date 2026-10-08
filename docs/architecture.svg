@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="540" viewBox="0 0 920 540" role="img" aria-label="MujoWinPC arhitektura">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8" fill="none" stroke="#4f9cf9" stroke-width="1.6"/>
+    </marker>
+    <style>
+      .box { fill: #1d2129; stroke: #4f9cf9; stroke-width: 1.6; rx: 10; }
+      .title { font-family: sans-serif; font-size: 17px; font-weight: bold; fill: #ffffff; }
+      .txt { font-family: monospace; font-size: 13px; fill: #bcd6f7; }
+      .lbl { font-family: sans-serif; font-size: 12px; fill: #7fb3f0; }
+    </style>
+  </defs>
+  <rect width="920" height="540" fill="#14171c"/>
+  <text x="20" y="32" class="title">MujoWinPC — arhitektura (Faza 1–3)</text>
+
+  <rect x="20" y="60" width="200" height="120" rx="10" fill="#1d2129" stroke="#4f9cf9" stroke-width="1.6"/>
+  <text x="36" y="88" class="title">🌐 Browser</text>
+  <text x="36" y="112" class="txt">noVNC :8006</text>
+  <text x="36" y="132" class="txt">RDP :3389</text>
+  <text x="36" y="152" class="txt">ploča web/</text>
+
+  <rect x="360" y="60" width="280" height="220" rx="10" fill="#1d2129" stroke="#4f9cf9" stroke-width="1.6"/>
+  <text x="376" y="88" class="title">📦 dockurr/windows</text>
+  <text x="376" y="112" class="txt">QEMU + KVM → Win 10/11</text>
+  <text x="376" y="132" class="txt">/storage = named volume</text>
+  <text x="376" y="152" class="txt">/oem → C:\OEM install.bat</text>
+  <text x="376" y="172" class="txt">RAM/CPU/DISK iz profila</text>
+  <text x="376" y="192" class="txt">healt: host-side probe</text>
+  <text x="376" y="252" class="txt">tar backup + --keep N</text>
+
+  <rect x="680" y="60" width="220" height="120" rx="10" fill="#1d2129" stroke="#4f9cf9" stroke-width="1.6"/>
+  <text x="696" y="88" class="title">💾 Podaci</text>
+  <text x="696" y="112" class="txt">mujowin-storage</text>
+  <text x="696" y="132" class="txt">backups/*.tar.gz</text>
+
+  <rect x="20" y="330" width="280" height="170" rx="10" fill="#1d2129" stroke="#3ecf6e" stroke-width="1.6"/>
+  <text x="36" y="358" class="title">⌨️ mujowin CLI</text>
+  <text x="36" y="382" class="txt">doctor / health</text>
+  <text x="36" y="402" class="txt">up / down / restart</text>
+  <text x="36" y="422" class="txt">backup / restore</text>
+  <text x="36" y="442" class="txt">profile + auto</text>
+  <text x="36" y="462" class="txt">idle-stop (cron)</text>
+
+  <rect x="340" y="330" width="240" height="170" rx="10" fill="#1d2129" stroke="#3ecf6e" stroke-width="1.6"/>
+  <text x="356" y="358" class="title">🔌 API (Express)</text>
+  <text x="356" y="382" class="txt">Bearer token (obavezan)</text>
+  <text x="356" y="402" class="txt">status / logs / boot</text>
+  <text x="356" y="422" class="txt">resursi host + VM</text>
+  <text x="356" y="442" class="txt">sluša 127.0.0.1:3001</text>
+
+  <rect x="620" y="330" width="280" height="170" rx="10" fill="#1d2129" stroke="#3ecf6e" stroke-width="1.6"/>
+  <text x="636" y="358" class="title">🧩 Compose</text>
+  <text x="636" y="382" class="txt">base + win10/11</text>
+  <text x="636" y="402" class="txt">+ profile override</text>
+  <text x="636" y="422" class="txt">lite/standard/dev/heavy</text>
+  <text x="636" y="462" class="txt">CI: lint/test/scan/release</text>
+
+  <line x1="220" y1="110" x2="355" y2="110" stroke="#4f9cf9" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="232" y="100" class="lbl">8006/3389</text>
+  <line x1="640" y1="140" x2="675" y2="140" stroke="#4f9cf9" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="160" y1="300" x2="160" y2="325" stroke="#3ecf6e" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="168" y="318" class="lbl">slaže -f trojku</text>
+  <line x1="300" y1="400" x2="335" y2="400" stroke="#3ecf6e" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="302" y="390" class="lbl">zove CLI</text>
+  <line x1="470" y1="300" x2="470" y2="325" stroke="#3ecf6e" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="478" y="318" class="lbl">up/down/logs</text>
+</svg>
