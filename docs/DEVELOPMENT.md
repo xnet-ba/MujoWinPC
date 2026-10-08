@@ -71,7 +71,9 @@ docker compose -f compose/smoke.local.yml down -v        # čisti sve
 ```
 
 Dokazano radi: Windows 10 ISO + Setup do 86% na 12-jezgrenom hostu bez KVM-a
-(vidi `docs/screenshots/`).
+(vidi `docs/screenshots/`). Izmjereno: ~200% CPU (2 emulirana jezgra),
+~1.4 MB/s upisa na disk, faza "Getting files ready" ide desecima minuta —
+ostavi da radi satima i povremeno provjeri noVNC.
 
 ## API server
 
