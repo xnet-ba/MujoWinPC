@@ -11,6 +11,12 @@
    Zaštita = vidljivost porta + Codespaces auth. Autentifikacija ploče dolazi
    u Fazi 2 s API-jem.
 4. **Docker socket se nigdje ne mounta** u kontejnere i ne izlaže mrežno.
+5. **API token** (`MUJO_API_TOKEN`, 32+ hex znaka): server se bez njega odbija
+   startati (non-mock). Poređenje je timing-safe. Samo `/api/health` je bez
+   auth-a. Token pripada u `.env`, nikad u git/logove; ploča ga drži u
+   `sessionStorage` (nestaje zatvaranjem taba), ne u `localStorage`.
+6. **API sluša na 127.0.0.1** po defaultu. Za udaljeni pristup koristi
+   SSH ili Codespaces port-forward, ne `MUJO_API_BIND=0.0.0.0` bez TLS-a.
 5. **OEM skripte** (`oem/`) izvršavaju se kao SYSTEM tokom instalacije —
    reviewaj svaku liniju prije prvog starta, kao i svaki kod koji se izvršava
    s privilegijama.
@@ -24,4 +30,4 @@
 ## Šta NIJE pokriveno u Fazi 1 (vidi ROADMAP → Sigurnost)
 
 Autentifikacija web ploče, TLS završetak, audit log, rotacija tajni,
-skeniranje image-a. Nemoj koristiti za osjetljive podatke dok to ne postoji.
+skeniranje image-a, rate limiting API-ja. Nemoj koristiti za osjetljive podatke dok to ne postoji.

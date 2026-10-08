@@ -32,6 +32,18 @@ Windows image + volumen rastu na desetine GB. `df -h`; o počisti Docker
 - Restore na drugu `DISK_SIZE` vrijednost: radi, ali particiju eventualno
   proširi ručno u Windows Disk Managementu (dockur napomena).
 
+## API problemi
+
+- **401 na sve** → loš token ili ga nema. Token iz `.env` (`MUJO_API_TOKEN`)
+  mora tačno odgovarati onom s kojim je server startan; ploča ga drži samo
+  u `sessionStorage` pa ga nakon zatvaranja taba upiši ponovo.
+- **Server se odmah gasi** → nema `MUJO_API_TOKEN` (non-mock). Generiši:
+  `openssl rand -hex 32`.
+- **Ploča ne vidi API** → API sluša na 127.0.0.1:3001; ploča gađa
+  `?api=http://HOST:3001` ako je host drugi (npr. forwarded Codespaces port).
+- **Boot faza "unknown"** → kontejner radi ali heuristika ne prepoznaje logove;
+  to je best-effort prikaz, mjerodavno je `mujowin logs`.
+
 ## Codespaces specifično (djelimično neprovjereno — vidi README Ograničenja)
 
 - KVM u Codespacesu tipično ne postoji → očekuj sporo ili neuspješno dizanje.

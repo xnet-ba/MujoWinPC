@@ -8,6 +8,10 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] Windows 10 i 11 kao compose overridei (S)
 - [x] Profili resursa lite/standard/dev/heavy (S)
 - [ ] Health check kontejnera (S) — planirano (Faza 2)
+- [x] Node/Express API: start/stop/status/logs (M)
+- [x] Resursi (CPU/RAM/disk) i boot faza u ploči (M)
+- [x] Mock mode bez VM-a + testovi CLI-ja i API-ja (M)
+- [x] OEM paketi (winget liste: default/dev/office) (S)
 
 ## 2. Razvojno iskustvo — gotovo/u radu
 
@@ -22,7 +26,8 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] Lozinke samo iz `.env`, odbijanje defaulta (S)
 - [x] SECURITY.md + RDP savjeti (S)
 - [ ] Privatni portovi po defaultu, dokumentovano (S) — Faza 2
-- [ ] Autentifikacija ploče/API-ja (M) — Faza 2
+- [x] Autentifikacija ploče/API-ja tokenom (M)
+- [ ] Release tagovi (S)
 - [ ] Skeniranje image-a u CI-ju (S) — Faza 3 (čeka odobrenje)
 
 ## 4. Performanse i resursi — planirano
@@ -48,6 +53,8 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 ## 7. UX i frontend — gotovo/djelimično
 
 - [x] Ploča: status, noVNC link, profili, FAQ (M)
+- [x] Live kontrola (start/stop/logovi/resursi/boot) preko API-ja (M)
+- [ ] Vodič kroz prvi start (S) — Faza 2
 - [x] bs/en, tamna/svijetla tema, mobilni prikaz (S)
 - [ ] Vodič kroz prvi start (S) — Faza 2
 - [ ] Boot progress + resursi uživo (M) — Faza 2 (treba API)
@@ -67,4 +74,6 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 ## 10. CI/CD i kvalitet — gotovo/djelimično
 
 - [x] GitHub Actions: shellcheck, compose validacija, HTML check, testovi (S)
+- [x] API testovi u CI-ju (S)
+- [ ] Release tagovi (S) — Faza 2
 - [ ] Release tagovi (S) — Faza 2

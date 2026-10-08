@@ -1,0 +1,5 @@
+# Default paket-lista za oem/install.bat (jedan winget ID po liniji, # = komentar).
+# Kopiraj packages-dev.txt / packages-office.txt na ovo ime prije prvog starta
+# za gotovo okruženje. Instalacija je best-effort (treba mrežu).
+7zip.7zip
+Mozilla.Firefox

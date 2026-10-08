@@ -10,4 +10,7 @@ Pravila:
 - Skripta se izvršava s visokim privilegijama — svaku liniju reviewaj.
 - Za debug dodaj `LOG: "1"` u environment (piše `C:\OEM\install.log`) ili
   `COMMAND` varijablu za jednokratnu komandu umjesto cijelog fajla.
-- Pune "gotova okruženja" (dev/office/test) su Faza 2/3 — ovdje samo kostur.
+- `packages.txt` je default lista (7-Zip + Firefox). Za gotovo okruženje
+  **prije prvog starta** kopiraj `packages-dev.txt` ili `packages-office.txt`
+  na ime `packages.txt`. Linije s `#` se preskaču; neuspjela instalacija ne
+  zaustavlja ostale (best-effort, treba mrežu u VM-u).

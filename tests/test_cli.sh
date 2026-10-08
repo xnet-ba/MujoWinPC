@@ -51,6 +51,7 @@ assert_fails "nepoznat profil pada" "$CLI" profile nepostojeci
 
 # 7. status/logs mock
 assert_contains "$("$CLI" status 2>&1)" "[mock]" "status mock"
+assert_contains "$("$CLI" status --json 2>&1)" '"State":"running"' "status --json mock"
 assert_contains "$("$CLI" logs 2>&1)" "[mock]" "logs mock"
 
 # 8. reset bez potvrde pada (daj NE na stdin)

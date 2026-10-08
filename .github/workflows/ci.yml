@@ -47,6 +47,28 @@ jobs:
         run: |
           ! grep -rEo 'https?://[^"'"'"' ]+' web/ | grep -vE 'dockur/windows|github\.com/dockur' \
             && echo "OK: nema eksternih CDN/trackera" || (echo "NAĐEN eksterni URL (osim dozvoljenog linka)"; exit 1)
+      - name: bs/en paritet (svaki data-bs mora imati data-en)
+        run: |
+          python3 - <<'EOF'
+          import re, sys
+          src = open('web/index.html', encoding='utf-8').read()
+          bad = [l for l in src.splitlines() if 'data-bs=' in l and 'data-en=' not in l and 'data-bs-ph' not in l]
+          bad += [l for l in src.splitlines() if 'data-bs-ph' in l and 'data-en-ph' not in l]
+          if bad:
+              print('\n'.join(bad)); sys.exit(1)
+          print('OK: bs/en paritet')
+          EOF
+
+  api:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: server } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: server/package-lock.json }
+      - run: npm ci
+      - run: node --check index.js && node --check mujowin.js && node --check resources.js && node --check boot.js
+      - run: node --test ../tests/test_api.mjs
 
   tests:
     runs-on: ubuntu-latest

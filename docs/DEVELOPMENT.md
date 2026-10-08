@@ -27,6 +27,18 @@ make lint                   # shellcheck ako postoji, inače bash -n
 Služi razvoju ploče/API-ja na mašini bez KVM-a (sjeme Faza-2 mock moda).
 `doctor` uvijek radi stvarne provjere — to je poenta.
 
+## API server
+
+```bash
+cd server && npm install
+openssl rand -hex 32          # → MUJO_API_TOKEN u .env (ili env)
+MUJO_MOCK=1 npm run dev      # mock + reload (token se ispiše ako ga nema)
+node index.js                # pravi rad (traži MUJO_API_TOKEN)
+node --test ../tests/test_api.mjs
+```
+
+Token ide kao `Authorization: Bearer …`. Bez njega: 401 (osim `/api/health`).
+
 ## Devcontainer
 
 `.devcontainer/devcontainer.json` je za razvoj **projekta** (lint, testovi,

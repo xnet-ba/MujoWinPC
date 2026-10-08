@@ -64,8 +64,29 @@ Lokalni Linux s KVM-om: isto, samo radi `make doctor` prije `up`-a.
 ## Konfiguracija (.env)
 
 `WINDOWS_VERSION` (10/11), `MUJO_PROFILE`, `WINDOWS_USERNAME`,
-`WINDOWS_PASSWORD` (obavezna, ne defaultna), `WEB_PORT`/`RDP_PORT`.
+`WINDOWS_PASSWORD` (obavezna, ne defaultna), `WEB_PORT`/`RDP_PORT`,
+`MUJO_API_TOKEN` (obavezan za API, `openssl rand -hex 32`),
+`MUJO_API_PORT` (3001), `MUJO_API_BIND` (127.0.0.1 — ne mijenjaj bez TLS-a).
 `.env` je u `.gitignore` — nikad ga ne commitaj s pravom lozinkom.
+
+## Kontrolni API (Faza 2)
+
+```bash
+cd server && npm install
+MUJO_API_TOKEN=$(openssl rand -hex 32) node index.js   # ili MUJO_MOCK=1 npm run dev
+```
+
+| Endpoint | Auth | Šta vraća/radi |
+|---|---|---|
+| `GET /api/health` | ne | `{ok, mock}` |
+| `GET /api/status` | da | radi li VM (+ `mujowin status --json`) |
+| `POST /api/up|down|restart` | da | pokreće CLI, vraća izlaz |
+| `GET /api/logs?tail=100` | da | zadnje linije loga |
+| `GET /api/resources` | da | host CPU/RAM/disk + VM profil |
+| `GET /api/boot` | da | boot faza (best-effort heuristika iz logova) |
+
+Server servira i ploču (isti port) i Docker socket nigdje ne izlaže — sve ide
+kroz `scripts/mujowin`. Ploča token drži u `sessionStorage`.
 
 ## Sigurnost (sažetak)
 

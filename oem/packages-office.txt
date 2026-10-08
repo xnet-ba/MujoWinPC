@@ -1,0 +1,4 @@
+# Office okruženje u VM-u.
+7zip.7zip
+Mozilla.Firefox
+TheDocumentFoundation.LibreOffice

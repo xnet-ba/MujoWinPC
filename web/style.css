@@ -36,6 +36,13 @@ th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--
 details { border: 1px solid var(--border); border-radius: .5rem;
   padding: .5rem .8rem; margin-bottom: .5rem; }
 summary { cursor: pointer; font-weight: 600; }
+.row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.row input { padding: .5rem .6rem; border-radius: .5rem; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); }
+pre.logs { background: var(--bg); border: 1px solid var(--border); border-radius: .5rem;
+  padding: .7rem; max-height: 260px; overflow: auto; font-size: .82rem; white-space: pre-wrap; }
+.bar { height: .55rem; background: var(--border); border-radius: .3rem; overflow: hidden; margin: .15rem 0 .5rem; }
+.bar > i { display: block; height: 100%; background: var(--accent); }
 footer { text-align: center; color: var(--muted); padding: 1.5rem; font-size: .9rem; }
 footer a { color: var(--accent); }
 @media (max-width: 600px) {

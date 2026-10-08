@@ -27,6 +27,28 @@
     </div>
   </section>
 
+  <section class="card" id="live">
+    <h2 data-bs="Upravljanje uživo (API)" data-en="Live control (API)">Upravljanje uživo (API)</h2>
+    <p class="hint" data-bs="Zahtijeva server iz Faze 2 + token. Bez API-ja koristi mujowin CLI (vidi Brzi start)." data-en="Requires the Phase-2 server + token. Without the API, use the mujowin CLI (see Quick start).">Zahtijeva server iz Faze 2 + token. Bez API-ja koristi mujowin CLI (vidi Brzi start).</p>
+    <div class="row">
+      <input id="apiBase" type="text" size="28" title="API baza">
+      <input id="apiToken" type="password" autocomplete="off" data-bs-ph="token" data-en-ph="token" placeholder="token">
+      <button id="apiConnect" type="button" class="btn primary" data-bs="Poveži" data-en="Connect">Poveži</button>
+      <button id="apiDrop" type="button" class="btn" data-bs="Odjava" data-en="Forget">Odjava</button>
+    </div>
+    <p id="liveState"><span class="dot unknown"></span><span data-bs="Nije povezano." data-en="Not connected.">Nije povezano.</span></p>
+    <div class="actions">
+      <button id="btnUp" type="button" class="btn" disabled>▶ <span data-bs="Start" data-en="Start">Start</span></button>
+      <button id="btnDown" type="button" class="btn" disabled>⏹ <span data-bs="Stop" data-en="Stop">Stop</span></button>
+      <button id="btnRestart" type="button" class="btn" disabled>↻ <span data-bs="Restart" data-en="Restart">Restart</span></button>
+      <span id="bootPhase" class="hint"></span>
+    </div>
+    <h3 data-bs="Resursi" data-en="Resources">Resursi</h3>
+    <div id="resBars" class="hint" data-bs="—" data-en="—">—</div>
+    <h3>Logovi <button id="btnLogs" type="button" class="btn" disabled data-bs="Osvježi" data-en="Refresh">Osvježi</button></h3>
+    <pre id="logView" class="logs">—</pre>
+  </section>
+
   <section class="card">
     <h2 data-bs="Brzi start" data-en="Quick start">Brzi start</h2>
     <ol>

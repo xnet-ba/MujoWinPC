@@ -1,0 +1,16 @@
+{
+  "name": "mujowin-api",
+  "version": "0.2.0",
+  "description": "MujoWinPC kontrolni API: povezuje web ploču s mujowin CLI-jem. Jedina zavisnost: express.",
+  "main": "index.js",
+  "type": "commonjs",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test ../tests/test_api.mjs"
+  },
+  "dependencies": {
+    "express": "^4.22.3"
+  }
+}

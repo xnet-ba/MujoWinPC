@@ -1,0 +1,7 @@
+# Razvojno okruženje u VM-u.
+7zip.7zip
+Mozilla.Firefox
+Git.Git
+Microsoft.VisualStudioCode
+OpenJS.NodeJS.LTS
+Python.Python.3.12
