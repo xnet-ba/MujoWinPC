@@ -7,7 +7,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
         with:
@@ -20,7 +20,7 @@ jobs:
   compose:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Kopiraj primjer env-a (samo za validaciju sintakse)
         run: cp .env.example .env
       - name: Validiraj sve kombinacije win x profil
@@ -37,7 +37,7 @@ jobs:
   html:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: { python-version: "3.x" }
       - name: HTML validacija (html5validator)
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: server } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: "22", cache: npm, cache-dependency-path: server/package-lock.json }
       - run: npm ci
@@ -74,7 +74,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: CLI testovi (mock)
         run: bash tests/test_cli.sh
       - name: Health/idle testovi
@@ -83,7 +83,7 @@ jobs:
   trivy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Sken image-a (HIGH/CRITICAL)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
