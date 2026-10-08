@@ -206,7 +206,12 @@ Core ✅ • DX ✅ • Sigurnost 🔄 • Performanse ✅ • Backup ✅ • Au
 
 ## 📸 Snimci ekrana
 
-_Uskoro — treba pravi KVM host za boot. Ovdje dolaze: noVNC desktop, kontrolna ploča (tamna/svijetla), API resursi uživo._
+_Pravi kadrovi sa smoke testa (TCG emulacija bez KVM-a, dockur v6.06):_
+
+<img src="docs/screenshots/setup-starting.png" alt="Windows Setup — Setup is starting, kroz noVNC" width="100%">
+<img src="docs/screenshots/install-progress.png" alt="Windows Setup — Installing Windows, kroz noVNC" width="100%">
+
+> Windows 10 ISO skinut s Microsoft servera, boot pod QEMU emulacijom, noVNC (port 8006) prikazuje pravi Setup ekran. Puna instalacija pod emulacijom traje dugo (dockur upozorava ~10× sporije bez KVM-a) — za stvarni rad treba KVM host.
 
 ---
 

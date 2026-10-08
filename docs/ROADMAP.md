@@ -69,8 +69,9 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] README, TROUBLESHOOTING, FAQ, CONTRIBUTING, CHANGELOG (M)
 - [x] Issue/PR šabloni (S)
-- [ ] Snimci ekrana sa stvarnog rada (S) — **jedino što ja ne mogu:
-  treba KVM host za boot (autor)**
+- [x] Snimci ekrana sa stvarnog rada (S) — setup kadrovi iz TCG smoke
+  testa su u README-ju; desktop kadar čeka KVM host ili dovršetak emulirane
+  instalacije
 
 ## 10. CI/CD i kvalitet — gotovo/djelimično
 

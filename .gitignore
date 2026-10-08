@@ -16,6 +16,9 @@ windows/
 backups/*.tar.gz
 !backups/.gitkeep
 
+# Lokalni compose overridei (ne commitaju se, npr. smoke test bez KVM-a)
+compose/*.local.yml
+
 # Node (Faza 2)
 node_modules/
 server/node_modules/
