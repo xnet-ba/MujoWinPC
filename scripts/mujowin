@@ -1,0 +1,240 @@
+#!/usr/bin/env bash
+# mujowin — glavni CLI za MujoWinPC.  ./scripts/mujowin <komanda>
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+. "$SCRIPT_DIR/lib/common.sh"
+
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-mujowin}"
+VOLUME="${COMPOSE_PROJECT_NAME}_mujowin-storage"
+BACKUP_DIR="$MUJO_ROOT/backups"
+
+usage() {
+  cat <<'EOF'
+Upotreba: mujowin <komanda> [opcije]
+
+  doctor            provjeri okruženje (KVM, Docker, RAM/CPU/disk, lozinka)
+  up                pokreni Windows VM (odbija bez lozinke)
+  down              zaustavi VM (podaci ostaju u volumenu)
+  status            prikaži stanje kontejnera
+  logs [-f]         prikaži logove (dodaj -f za praćenje)
+  restart           restartuj VM
+  reset             OBRIŠI volumen s podacima (traži eksplicitnu potvrdu)
+  backup [ime]      snimi volumen u tar (VM treba biti zaustavljen)
+  restore <tar>     vrati volumen iz tar-a (VM mora biti zaustavljen)
+  profile <ime>     postavi profil: lite | standard | dev | heavy
+  help              ova pomoć
+
+Varijable: MUJO_MOCK=1 (lažni docker pozivi, za razvoj bez KVM-a),
+  MUJO_ALLOW_NO_KVM=1 (preskoči KVM upozorenje uz vlastiti rizik).
+EOF
+}
+
+compose() {
+  # shellcheck disable=SC2086
+  docker compose --env-file "$ENV_FILE" $(compose_files) "$@"
+}
+
+vm_running() {
+  compose ps --status running --services 2>/dev/null | grep -q '^windows$'
+}
+
+# ---------- doctor ----------
+cmd_doctor() {
+  load_env
+  local prof ver ok=1
+  prof="$(active_profile)"; ver="$(windows_version)"
+  log "Profil: $prof | Windows: $ver | dir: $MUJO_ROOT"
+
+  # KVM
+  if [ -e /dev/kvm ]; then
+    log "OK   /dev/kvm postoji (hardverska akceleracija dostupna)."
+  else
+    ok=0
+    warn "NEMA /dev/kvm — KVM akceleracija nije dostupna."
+    echo "     Šta to znači: QEMU mora emulirati CPU u softveru; Windows će biti"
+    echo "     ekstremno spor ili se neće ni podići. Na Codespacesu i VPS-ovima"
+    echo "     KVM često ne postoji — to je ograničenje hosta, ne greška projekta."
+    echo "     Rješenje: host s KVM-om (lokalni Linux s uključenom virtualizacijom)"
+    echo "     ili KVM=N emulacija samo za kratki test (nepreporučeno)."
+  fi
+
+  # TUN
+  if [ -e /dev/net/tun ]; then log "OK   /dev/net/tun postoji."; else warn "NEMA /dev/net/tun — dockur mreža možda neće raditi."; fi
+
+  # Docker
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    log "OK   $(docker --version 2>/dev/null | head -1), $(docker compose version 2>/dev/null | head -1)."
+  else
+    ok=0; warn "Docker ili Compose v2 nedostupan. Instaliraj Docker Desktop / docker.io."
+  fi
+
+  # RAM / CPU / disk (stvarne vrijednosti s hosta)
+  local mem_gb cpu disk_avail
+  mem_gb="$(free -g 2>/dev/null | awk '/^Mem:/{print $2}')"
+  cpu="$(nproc 2>/dev/null || echo "?")"
+  disk_avail="$(df -h "$MUJO_ROOT" 2>/dev/null | awk 'NR==2{print $4}')"
+  log "Host: RAM ~${mem_gb:-?}G | CPU ${cpu} jezgra | slobodno diska: ${disk_avail:-?} (df -h)."
+  free -h 2>/dev/null | head -2 || true
+
+  # Poređenje s profilom
+  local need_ram=0 need_cpu=0 need_disk=0
+  if [ -f "$MUJO_ROOT/profiles/$prof.env" ]; then
+    need_ram="$(grep -E '^RAM_SIZE=' "$MUJO_ROOT/profiles/$prof.env" | grep -oE '[0-9]+')"
+    need_cpu="$(grep -E '^CPU_CORES=' "$MUJO_ROOT/profiles/$prof.env" | grep -oE '[0-9]+')"
+    need_disk="$(grep -E '^DISK_SIZE=' "$MUJO_ROOT/profiles/$prof.env" | grep -oE '[0-9]+')"
+  fi
+  log "Profil '$prof' traži: RAM ${need_ram}G / CPU ${need_cpu} / disk ${need_disk}G (+ par GB za Docker)."
+  if [ -n "$mem_gb" ] && [ "$mem_gb" -lt "$((need_ram + 2))" ] 2>/dev/null; then
+    ok=0; warn "Host ima manje RAM-a nego što profil '$prof' traži (+2G za host). Razmisli o slabijem profilu."
+  fi
+
+  # Auto-preporuka
+  local rec=lite
+  if [ -n "$mem_gb" ]; then
+    if [ "$mem_gb" -ge 20 ] && [ "${cpu:-0}" -ge 8 ] 2>/dev/null; then rec=heavy
+    elif [ "$mem_gb" -ge 14 ]; then rec=dev
+    elif [ "$mem_gb" -ge 10 ]; then rec=standard
+    fi
+  fi
+  log "Preporuka: profil '$rec' za ovaj host (mujowin profile $rec)."
+
+  # Lozinka
+  if [ -z "${WINDOWS_PASSWORD:-}" ]; then
+    ok=0; warn "WINDOWS_PASSWORD nije postavljena — 'mujowin up' će se odbiti. Vidi .env.example."
+  else
+    case "${WINDOWS_PASSWORD:-}" in admin|password|123456|docker)
+      ok=0; warn "WINDOWS_PASSWORD je defaultna — postavi pravu lozinku u .env." ;;
+      *) log "OK   lozinka postavljena (vrijednost se ne ispisuje)." ;;
+    esac
+  fi
+
+  # Portovi
+  for p in "${WEB_PORT:-8006}" "${RDP_PORT:-3389}"; do
+    if (exec 3<>"/dev/tcp/127.0.0.1/$p") 2>/dev/null; then
+      exec 3<&- 3>&-; warn "Port $p je zauzet — nešto već sluša na njemu."
+    else
+      log "OK   port $p slobodan."
+    fi
+  done
+
+  if [ "$ok" = 1 ]; then log "doctor: sve provjere prošle."; else warn "doctor: ima neprođenih provjera (vidi iznad)."; return 1; fi
+}
+
+# ---------- up ----------
+cmd_up() {
+  require_password; require_docker
+  if [ ! -e /dev/kvm ] && [ "${MUJO_ALLOW_NO_KVM:-0}" != "1" ] && ! mock_on; then
+    warn "Nema /dev/kvm (vidi 'mujowin doctor'). Nastavak je skoro sigurno uzaludan."
+    printf 'Nastavi svejedno? Upiši DA za potvrdu: '
+    read -r ans
+    [ "$ans" = "DA" ] || die "Prekinuto. Postavi MUJO_ALLOW_NO_KVM=1 ako znaš šta radiš."
+  fi
+  if mock_on; then log "[mock] docker compose up -d ($(compose_files))"; return 0; fi
+  log "Start: profil=$(active_profile) windows=$(windows_version)"
+  compose up -d
+  log "Pokrenuto. noVNC: http://localhost:${WEB_PORT:-8006} | RDP: localhost:${RDP_PORT:-3389}"
+}
+
+cmd_down() {
+  require_docker
+  if mock_on; then log "[mock] docker compose down"; return 0; fi
+  compose down
+  log "Zaustavljeno. Podaci ostaju u volumenu $VOLUME."
+}
+
+cmd_status() {
+  require_docker
+  if mock_on; then printf '[mock] windows: running (profil=%s)\n' "$(active_profile)"; return 0; fi
+  compose ps
+}
+
+cmd_logs() {
+  require_docker
+  if mock_on; then echo "[mock] boot … desktop ready (pretend-log)"; return 0; fi
+  if [ "${1:-}" = "-f" ]; then compose logs -f windows; else compose logs --tail=100 windows; fi
+}
+
+cmd_restart() {
+  require_docker
+  if mock_on; then log "[mock] restart"; return 0; fi
+  compose restart windows
+}
+
+cmd_reset() {
+  require_docker
+  echo "OPREZ: briše se volumen $VOLUME — svi podaci Windows VM-a nestaju."
+  printf 'Za potvrdu upiši tačno: OBRISI-SVE : '
+  read -r ans
+  [ "$ans" = "OBRISI-SVE" ] || die "Prekinuto (potvrda nije data)."
+  if mock_on; then log "[mock] volume rm $VOLUME"; return 0; fi
+  compose down 2>/dev/null || true
+  docker volume rm "$VOLUME"
+  log "Volumen obrisan."
+}
+
+cmd_backup() {
+  require_docker
+  local name="${1:-mujowin-backup-$(date +%Y%m%d-%H%M%S).tar.gz}"
+  mkdir -p "$BACKUP_DIR"
+  if vm_running && ! mock_on; then
+    warn "VM je pokrenut — backup može biti nekonzistentan. Zaustavi ga ('mujowin down') ili potvrdi."
+    printf 'Nastavi svejedno? Upiši DA: '
+    read -r ans
+    [ "$ans" = "DA" ] || die "Prekinuto."
+  fi
+  # ponytail: procjena veličine prije backupa bi bila ljepša; du za velike volumene traje, pa samo upozoravamo
+  warn "Backup volumena može biti velik (deseci GB). Provjeri slobodan prostor (df -h)."
+  if mock_on; then log "[mock] backup -> $BACKUP_DIR/$name"; return 0; fi
+  docker run --rm -v "$VOLUME:/data:ro" -v "$BACKUP_DIR:/backup" alpine \
+    tar czf "/backup/$name" -C /data .
+  log "Backup gotov: $BACKUP_DIR/$name"
+}
+
+cmd_restore() {
+  require_docker
+  local file="${1:-}"
+  [ -n "$file" ] || die "Upotreba: mujowin restore <backup.tar.gz>"
+  [ -f "$file" ] || [ -f "$BACKUP_DIR/$file" ] || die "Fajl ne postoji: $file"
+  case "$file" in */*) : ;; *) file="$BACKUP_DIR/$file" ;; esac
+  if vm_running && ! mock_on; then die "VM je pokrenut. Zaustavi ga ('mujowin down') prije restore-a."; fi
+  echo "OPREZ: sadržaj volumena $VOLUME bit će zamijenjen sadržajem $file."
+  printf 'Za potvrdu upiši tačno: VRATI-BACKUP : '
+  read -r ans
+  [ "$ans" = "VRATI-BACKUP" ] || die "Prekinuto (potvrda nije data)."
+  if mock_on; then log "[mock] restore $file -> $VOLUME"; return 0; fi
+  compose down 2>/dev/null || true
+  docker volume create "$VOLUME" >/dev/null
+  docker run --rm -v "$VOLUME:/data" -v "$BACKUP_DIR:/backup:ro" alpine \
+    sh -c "rm -rf /data/* /data/..?* /data/.[!.]* 2>/dev/null; tar xzf '/backup/$(basename "$file")' -C /data"
+  log "Restore gotov."
+}
+
+cmd_profile() {
+  local name="${1:-}"
+  [ -n "$name" ] || { printf 'Aktivan profil: %s\nDostupni:' "$(active_profile)"; ls "$MUJO_ROOT/profiles" | sed 's/\.env$//'; return 0; }
+  [ -f "$MUJO_ROOT/profiles/$name.env" ] || die "Nepoznat profil '$name'. Dostupni: $(ls "$MUJO_ROOT/profiles" | sed 's/\.env$//' | tr '\n' ' ')"
+  printf '%s\n' "$name" > "$PROFILE_FILE"
+  if [ -f "$ENV_FILE" ] && grep -q '^MUJO_PROFILE=' "$ENV_FILE"; then
+    sed -i "s/^MUJO_PROFILE=.*/MUJO_PROFILE=$name/" "$ENV_FILE"
+  fi
+  log "Profil postavljen: $name (RAM/CPU/disk iz profiles/$name.env)."
+}
+
+# ---------- main ----------
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  doctor) cmd_doctor ;;
+  up) cmd_up "$@" ;;
+  down) cmd_down "$@" ;;
+  status) cmd_status "$@" ;;
+  logs) cmd_logs "$@" ;;
+  restart) cmd_restart "$@" ;;
+  reset) cmd_reset "$@" ;;
+  backup) cmd_backup "$@" ;;
+  restore) cmd_restore "$@" ;;
+  profile) cmd_profile "$@" ;;
+  help|--help|-h) usage ;;
+  *) die "Nepoznata komanda '$cmd'. Pokušaj: mujowin help" ;;
+esac
