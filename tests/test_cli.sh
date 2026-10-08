@@ -67,9 +67,9 @@ touch -d '10 days ago' "$TROOT/backups/mujowin-backup-star1.tar.gz"
 touch -d '9 days ago' "$TROOT/backups/mujowin-backup-star2.tar.gz"
 touch -d '8 days ago' "$TROOT/backups/mujowin-backup-star3.tar.gz"
 MUJO_ROOT_OVERRIDE="$TROOT" WINDOWS_PASSWORD="jaka-lozinka-123" "$CLI" backup --keep 2 >/dev/null 2>&1
-left="$(ls "$TROOT/backups" | wc -l)"
-[ "$left" = 2 ] && ok "rotacija --keep 2" || fail "rotacija --keep 2" "ostalo $left fajlova"
-[ -e "$TROOT/backups/mujowin-backup-star3.tar.gz" ] && ok "rotacija čuva najnoviji" || fail "rotacija čuva najnoviji"
+left="$(find "$TROOT/backups" -maxdepth 1 -name '*.tar.gz' | wc -l)"
+if [ "$left" = 2 ]; then ok "rotacija --keep 2"; else fail "rotacija --keep 2" "ostalo $left fajlova"; fi
+if [ -e "$TROOT/backups/mujowin-backup-star3.tar.gz" ]; then ok "rotacija čuva najnoviji"; else fail "rotacija čuva najnoviji"; fi
 assert_fails "rotacija --keep bez broja pada" sh -c "MUJO_ROOT_OVERRIDE=$TROOT $CLI backup --keep"
 rm -rf "$TROOT"
 

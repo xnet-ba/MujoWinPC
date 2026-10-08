@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source-path=SCRIPTDIR
 # shellcheck source=lib/common.sh
 . "$SCRIPT_DIR/lib/common.sh"
 
@@ -240,10 +241,15 @@ cmd_restore() {
   log "Restore gotov."
 }
 
+list_profiles() {
+  local f
+  for f in "$MUJO_ROOT"/profiles/*.env; do basename "$f" .env; done
+}
+
 cmd_profile() {
   local name="${1:-}"
-  [ -n "$name" ] || { printf 'Aktivan profil: %s\nDostupni:' "$(active_profile)"; ls "$MUJO_ROOT/profiles" | sed 's/\.env$//'; return 0; }
-  [ -f "$MUJO_ROOT/profiles/$name.env" ] || die "Nepoznat profil '$name'. Dostupni: $(ls "$MUJO_ROOT/profiles" | sed 's/\.env$//' | tr '\n' ' ')"
+  [ -n "$name" ] || { printf 'Aktivan profil: %s\nDostupni: %s\n' "$(active_profile)" "$(list_profiles | tr '\n' ' ')"; return 0; }
+  [ -f "$MUJO_ROOT/profiles/$name.env" ] || die "Nepoznat profil '$name'. Dostupni: $(list_profiles | tr '\n' ' ')"
   printf '%s\n' "$name" > "$PROFILE_FILE"
   if [ -f "$ENV_FILE" ] && grep -q '^MUJO_PROFILE=' "$ENV_FILE"; then
     sed -i "s/^MUJO_PROFILE=.*/MUJO_PROFILE=$name/" "$ENV_FILE"
