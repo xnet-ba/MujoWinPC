@@ -29,6 +29,50 @@ make lint                   # shellcheck ako postoji, inače bash -n
 Služi razvoju ploče/API-ja na mašini bez KVM-a (sjeme Faza-2 mock moda).
 `doctor` uvijek radi stvarne provjere — to je poenta.
 
+## Smoke test bez KVM-a (samo stack, ne performanse)
+
+Na mašini bez `/dev/kvm` možeš dignuti pravi dockur kontejner u čistoj
+emulaciji (`KVM: "N"`) da provjeriš compose, boot, ISO download i noVNC.
+Ekstremno sporo (dockur upozorava ~10×), ali dokazuje da stack radi end-to-end.
+Fajl je lokalan i gitignorean (`compose/*.local.yml`):
+
+```yaml
+# compose/smoke.local.yml — NE COMMITATI
+services:
+  windows:
+    image: dockurr/windows
+    container_name: mujowin-smoke
+    environment:
+      VERSION: "10"
+      USERNAME: Docker
+      PASSWORD: <jaka-lozinka>
+      RAM_SIZE: 4G
+      CPU_CORES: "2"
+      DISK_SIZE: 32G
+      KVM: "N"
+    devices:
+      - /dev/net/tun
+    cap_add: [NET_ADMIN]
+    ports: ["8006:8006", "3389:3389/tcp", "3389:3389/udp"]
+    volumes:
+      - mujowin-smoke:/storage
+      - ./oem:/oem:ro
+    stop_grace_period: 2m
+    restart: "no"
+volumes:
+  mujowin-smoke:
+```
+
+```bash
+docker compose -f compose/smoke.local.yml up -d
+docker logs mujowin-smoke --tail 5   # prati ISO download + boot
+curl -s -o /dev/null -w "%{http_code}\n" localhost:8006   # 200 = noVNC živ
+docker compose -f compose/smoke.local.yml down -v        # čisti sve
+```
+
+Dokazano radi: Windows 10 ISO + Setup do 86% na 12-jezgrenom hostu bez KVM-a
+(vidi `docs/screenshots/`).
+
 ## API server
 
 ```bash
