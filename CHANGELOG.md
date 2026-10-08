@@ -20,6 +20,11 @@ Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
 
 ## [Unreleased]
 
+### Dodano
+
+- `mujowin logs --tail N` (do 1000); API prosljeđuje `?tail=` do CLI-ja
+  umjesto da siječe lokalno.
+
 ### Dodano (Faza 2)
 
 - `server/` Express API (jedina zavisnost: express): health, status, up/down/

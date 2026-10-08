@@ -81,8 +81,8 @@ app.get("/api/logs", async (req, res) => {
   if (mock()) return res.json({ ok: true, logs: mockLogs() });
   const tail = Math.min(1000, Math.max(10, Number(req.query.tail) || 100));
   try {
-    const logs = await runCli(["logs"], 30000);
-    res.json({ ok: true, logs: logs.split("\n").slice(-tail).join("\n") });
+    const logs = await runCli(["logs", "--tail", String(tail)], 30000);
+    res.json({ ok: true, logs });
   } catch (e) { res.status(500).json({ ok: false, error: String(e.message || e).slice(0, 500) }); }
 });
 

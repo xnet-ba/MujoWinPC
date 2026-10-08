@@ -20,7 +20,7 @@ Upotreba: mujowin <komanda> [opcije]
   up                pokreni Windows VM (odbija bez lozinke)
   down              zaustavi VM (podaci ostaju u volumenu)
   status [--json]     prikaži stanje kontejnera (--json za API)
-  logs [-f]         prikaži logove (dodaj -f za praćenje)
+  logs [-f] [--tail N]  prikaži logove (praćenje / zadnjih N, max 1000)
   restart           restartuj VM
   reset             OBRIŠI volumen s podacima (traži eksplicitnu potvrdu)
   backup [ime] [--keep N]  snimi volumen u tar (VM treba biti zaustavljen)
@@ -169,8 +169,20 @@ cmd_status() {
 
 cmd_logs() {
   require_docker
+  local tail=100
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -f) if mock_on; then echo "[mock] boot … desktop ready (pretend-log)"; return 0; fi
+          compose logs -f windows; return 0 ;;
+      --tail) [ $# -ge 2 ] || die "--tail traži broj."; tail="$2"; shift 2 ;;
+      --tail=*) tail="${1#--tail=}"; shift ;;
+      *) die "Nepoznata opcija '$1' (logs [-f] [--tail N])." ;;
+    esac
+  done
+  case "$tail" in ''|*[!0-9]*) die "--tail traži broj." ;; esac
+  [ "$tail" -gt 1000 ] && tail=1000
   if mock_on; then echo "[mock] boot … desktop ready (pretend-log)"; return 0; fi
-  if [ "${1:-}" = "-f" ]; then compose logs -f windows; else compose logs --tail=100 windows; fi
+  compose logs --tail="$tail" windows
 }
 
 cmd_restart() {

@@ -108,7 +108,7 @@ mujowin health            kontejner + TCP probe portova s hosta
 mujowin up                start (odbija bez lozinke; upozorava bez KVM-a)
 mujowin down / restart    stop / restart (podaci ostaju u volumenu)
 mujowin status [--json]   stanje (json za API)
-mujowin logs [-f]         logovi (praćenje uživo)
+mujowin logs [-f] [--tail N]  logovi (praćenje / zadnjih N do 1000)
 mujowin reset             BRIŠE volumen — traži ukucano OBRISI-SVE
 mujowin backup [ime] [--keep N]   tar + rotacija (VM treba biti zaustavljen)
 mujowin restore <tar>     vraćanje (VM mora biti zaustavljen + potvrda)
