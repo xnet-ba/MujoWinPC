@@ -1,0 +1,13 @@
+{
+  "name": "MujoWinPC dev (bez Windows VM-a)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/shellcheck:1": {}
+  },
+  "postCreateCommand": "cp -n .env.example .env || true",
+  "customizations": {
+    "vscode": { "extensions": ["timonwong.shell"] }
+  }
+}

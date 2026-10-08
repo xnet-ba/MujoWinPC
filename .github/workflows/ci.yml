@@ -1,0 +1,56 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: ./scripts
+          additional_files: tests/test_cli.sh
+      - name: bash syntax (fallback)
+        run: bash -n scripts/mujowin && bash -n scripts/lib/common.sh && bash -n tests/test_cli.sh
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kopiraj primjer env-a (samo za validaciju sintakse)
+        run: cp .env.example .env
+      - name: Validiraj sve kombinacije win x profil
+        run: |
+          for win in 10 11; do
+            for prof in lite standard dev heavy; do
+              echo "--- win$win + $prof ---"
+              WINDOWS_PASSWORD=ci-dummy-16chars docker compose --env-file .env \
+                -f compose/base.yml -f compose/win$win.yml -f compose/profile-$prof.yml \
+                config >/dev/null
+            done
+          done
+
+  html:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.x" }
+      - name: HTML validacija (html5validator)
+        run: |
+          pip install html5validator
+          html5validator --root web/ --also-check-css || html5validator --root web/
+      - name: Bez eksternih resursa
+        run: |
+          ! grep -rEo 'https?://[^"'"'"' ]+' web/ | grep -vE 'dockur/windows|github\.com/dockur' \
+            && echo "OK: nema eksternih CDN/trackera" || (echo "NAĐEN eksterni URL (osim dozvoljenog linka)"; exit 1)
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CLI testovi (mock)
+        run: bash tests/test_cli.sh
