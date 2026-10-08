@@ -1,0 +1,19 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag i changelog provjera
+        run: |
+          grep -q "## \[Unreleased\]" CHANGELOG.md
+          git tag --list 'v*' | grep -qx "${GITHUB_REF_NAME}"
+      - uses: softprops/action-gh-release@v3.0.3
+        with:
+          generate_release_notes: true
+          body: "Vidi CHANGELOG.md za detalje. Napomena: snimci ekrana sa stvarnog rada još nisu dodani (treba KVM host)."

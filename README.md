@@ -49,7 +49,8 @@ Detaljna checklista: `docs/FIRST_START.md`.
 | `mujowin down / restart / status / logs [-f]` | svakodnevno upravljanje |
 | `mujowin reset` | **briše volumen** — traži ukucanu potvrdu |
 | `mujowin backup [ime]` / `restore <tar>` | tar volumena; VM treba biti zaustavljen |
-| `mujowin profile <ime>` | postavi profil |
+| `mujowin profile <ime>` | postavi profil (`auto` = preporuka doctora) |
+| `mujowin health` | host-side provjera: kontejner + TCP probe 8006/3389 |
 
 ## Profili
 
@@ -100,6 +101,10 @@ do tada ne koristi za osjetljive podatke.
 
 - **Nema GPU-a** za VM na Codespacesu/tipičnim VPS-ovima; grafika preko noVNC-a.
 - Bez `/dev/kvm` praktično neupotrebljivo (softverska emulacija).
+- Codespaces idle timeout: default **30 min**, podesivo 5–240 min
+  ([GitHub docs](https://docs.github.com/en/codespaces/setting-your-user-preferences/setting-your-timeout-period-for-github-codespaces));
+  `scripts/idle-stop.sh` gasi VM kad nema konekcija (cron primjer u fajlu).
+- Host-specifično: `docs/HOSTS.md` (Codespaces / lokalni Linux / VPS).
 - Brojke o Codespaces satima, idle timeoutu, veličini image-a i vremenima
   boot-a **namjerno ne navodimo** — mijenjaju se; provjeri u zvaničnoj
   GitHub/dockur dokumentaciji.

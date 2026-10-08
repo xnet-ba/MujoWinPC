@@ -74,3 +74,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: CLI testovi (mock)
         run: bash tests/test_cli.sh
+      - name: Health/idle testovi
+        run: bash tests/test_idle.sh
+
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sken image-a (HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: dockurr/windows
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: "0"  # ne ruši build dok ne vidimo šta prijavljuje uzvodni image

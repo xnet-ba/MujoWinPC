@@ -18,7 +18,8 @@ load_env() {
     case "$k" in ''|\#*) continue ;; esac
     k="$(printf '%s' "$k" | tr -d '[:space:]')"
     v="$(printf '%s' "$v" | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
-    case "$k" in WINDOWS_*|MUJO_*|WEB_PORT|RDP_PORT) export "$k=$v" ;; esac
+    case "$k" in WINDOWS_*|MUJO_*|WEB_PORT|RDP_PORT) : ;; *) continue ;; esac
+    if [ -z "${!k+x}" ]; then export "$k=$v"; fi  # eksplicitni env pobjeđuje .env
   done < "$ENV_FILE"
 }
 

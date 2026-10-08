@@ -7,7 +7,10 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] Stabilan start/stop preko CLI-ja (S)
 - [x] Windows 10 i 11 kao compose overridei (S)
 - [x] Profili resursa lite/standard/dev/heavy (S)
-- [ ] Health check kontejnera (S) — planirano (Faza 2)
+- [x] Health check: `mujowin health` host-side (kontejner + TCP probe).
+  In-container healthcheck namjerno izostavljen: dockur image je minimalni
+  rootfs bez garantovanog HTTP klijenta (provjeren Dockerfile) — pogrešan
+  test bi flappingovao zdrave VM-ove. (S)
 - [x] Node/Express API: start/stop/status/logs (M)
 - [x] Resursi (CPU/RAM/disk) i boot faza u ploči (M)
 - [x] Mock mode bez VM-a + testovi CLI-ja i API-ja (M)
@@ -25,17 +28,14 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] Lozinke samo iz `.env`, odbijanje defaulta (S)
 - [x] SECURITY.md + RDP savjeti (S)
-- [ ] Privatni portovi po defaultu, dokumentovano (S) — Faza 2
+- [x] Privatni portovi dokumentovani (SECURITY + HOSTS) (S)
 - [x] Autentifikacija ploče/API-ja tokenom (M)
-- [ ] Release tagovi (S)
-- [ ] Skeniranje image-a u CI-ju (S) — Faza 3 (čeka odobrenje)
 
 ## 4. Performanse i resursi — planirano
 
-- [ ] Auto-profil u `doctor` (postoji preporuka; puna automatika) (S) — Faza 2
-- [ ] Upozorenja o resursima uživo (M) — Faza 2
-- [ ] Idle auto-stop radi štednje Codespaces sati (M) — Faza 3, **treba provjeriti
-  stvarna GitHub pravila o idle timeoutu i limitima** (čeka odobrenje)
+- [x] Auto-profil: `mujowin profile auto` (S)
+- [x] Idle auto-stop skripta (`scripts/idle-stop.sh`, cron primjer) (M).
+  GitHub pravila provjerena u docsima (default 30 min, 5–240 min).
 
 ## 5. Persistencija i backup — gotovo/djelimično
 
@@ -61,9 +61,10 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 ## 8. Kompatibilnost i hostovi — planirano
 
-- [ ] Codespaces (primarno): vodič + provjerene razlike (M) — treba pravi test
-- [ ] Lokalni Linux s KVM-om: vodič (S) — treba pravi test
-- [ ] VPS: ograničenja (S) — Faza 3 (čeka odobrenje)
+- [x] Codespaces / lokalni Linux / VPS: `docs/HOSTS.md` (M).
+  Stvarni test na Codespacesu i dalje treba autora (nema KVM-a ovdje).
+- [ ] Primjeri i snimci ekrana sa stvarnog rada (S) — **jedino što ja ne mogu:
+  treba KVM host za boot**
 
 ## 9. Dokumentacija i zajednica — gotovo
 
@@ -75,5 +76,5 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] GitHub Actions: shellcheck, compose validacija, HTML check, testovi (S)
 - [x] API testovi u CI-ju (S)
-- [ ] Release tagovi (S) — Faza 2
-- [ ] Release tagovi (S) — Faza 2
+- [x] Trivy sken image-a (HIGH/CRITICAL, neblokirajuće — image je uzvodni) (S)
+- [x] Release workflow (`v*` tag → GitHub Release) (S)

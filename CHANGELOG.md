@@ -16,6 +16,12 @@ Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
 - Rotacija backupa (`backup --keep N`), `docs/FIRST_START.md`,
   privatni portovi dokumentovani, shellcheck čist (0 upozorenja).
 
+### Dodano (Faza 3)
+
+- `mujowin health` (host-side kontejner + TCP probe), `profile auto`,
+  `scripts/idle-stop.sh` (cron primjer), `docs/HOSTS.md`.
+- CI: Trivy sken (neblokirajući), Release workflow na `v*` tagove.
+
 ### Dodano (Faza 1)
 
 - CLI `mujowin`: doctor, up, down, status, logs, restart, reset, backup,

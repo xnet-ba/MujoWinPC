@@ -25,7 +25,8 @@ Upotreba: mujowin <komanda> [opcije]
   reset             OBRIŠI volumen s podacima (traži eksplicitnu potvrdu)
   backup [ime] [--keep N]  snimi volumen u tar (VM treba biti zaustavljen)
   restore <tar>     vrati volumen iz tar-a (VM mora biti zaustavljen)
-  profile <ime>     postavi profil: lite | standard | dev | heavy
+  profile <ime>|auto  postavi profil (auto = preporuka doctora)
+  health            kontejner + TCP probe portova s hosta
   help              ova pomoć
 
 Varijable: MUJO_MOCK=1 (lažni docker pozivi, za razvoj bez KVM-a),
@@ -41,6 +42,17 @@ compose() {
 vm_running() {
   mock_on && return 1
   compose ps --status running --services 2>/dev/null | grep -q '^windows$'
+}
+
+# Preporuka profila prema stvarnom hostu (koriste doctor i `profile auto`).
+recommend_profile() {
+  local mem_gb="${1:-}" cpu="${2:-}"
+  [ -z "$mem_gb" ] && mem_gb="$(free -g 2>/dev/null | awk '/^Mem:/{print $2}')"
+  [ -z "$cpu" ] && cpu="$(nproc 2>/dev/null || echo 0)"
+  if [ -n "$mem_gb" ] && [ "$mem_gb" -ge 20 ] 2>/dev/null && [ "${cpu:-0}" -ge 8 ] 2>/dev/null; then echo heavy
+  elif [ -n "$mem_gb" ] && [ "$mem_gb" -ge 14 ] 2>/dev/null; then echo dev
+  elif [ -n "$mem_gb" ] && [ "$mem_gb" -ge 10 ] 2>/dev/null; then echo standard
+  else echo lite; fi
 }
 
 # ---------- doctor ----------
@@ -94,13 +106,8 @@ cmd_doctor() {
   fi
 
   # Auto-preporuka
-  local rec=lite
-  if [ -n "$mem_gb" ]; then
-    if [ "$mem_gb" -ge 20 ] && [ "${cpu:-0}" -ge 8 ] 2>/dev/null; then rec=heavy
-    elif [ "$mem_gb" -ge 14 ]; then rec=dev
-    elif [ "$mem_gb" -ge 10 ]; then rec=standard
-    fi
-  fi
+  local rec
+  rec="$(recommend_profile "$mem_gb" "$cpu")"
   log "Preporuka: profil '$rec' za ovaj host (mujowin profile $rec)."
 
   # Lozinka
@@ -250,6 +257,10 @@ list_profiles() {
 cmd_profile() {
   local name="${1:-}"
   [ -n "$name" ] || { printf 'Aktivan profil: %s\nDostupni: %s\n' "$(active_profile)" "$(list_profiles | tr '\n' ' ')"; return 0; }
+  if [ "$name" = "auto" ]; then
+    name="$(recommend_profile)"
+    log "Auto-izbor prema hostu: $name."
+  fi
   [ -f "$MUJO_ROOT/profiles/$name.env" ] || die "Nepoznat profil '$name'. Dostupni: $(list_profiles | tr '\n' ' ')"
   printf '%s\n' "$name" > "$PROFILE_FILE"
   if [ -f "$ENV_FILE" ] && grep -q '^MUJO_PROFILE=' "$ENV_FILE"; then
@@ -258,10 +269,30 @@ cmd_profile() {
   log "Profil postavljen: $name (RAM/CPU/disk iz profiles/$name.env)."
 }
 
+# Host-side provjera: radi li kontejner i odgovaraju li portovi.
+# Namjerno s hosta (bash /dev/tcp), ne iz kontejnera: dockur image je
+# minimalni rootfs bez garantovanog HTTP klijenta (provjeren Dockerfile),
+# pa bi in-container healthcheck s pogrešnim alatom flappingovao zdrave VM-ove.
+cmd_health() {
+  require_docker
+  local rc=0 spec name p
+  if mock_on; then log "[mock] kontejner: running";
+  elif vm_running; then log "OK   kontejner radi.";
+  else warn "kontejner ne radi."; rc=1; fi
+  for spec in "noVNC:${WEB_PORT:-8006}" "RDP:${RDP_PORT:-3389}"; do
+    name="${spec%%:*}"; p="${spec##*:}"
+    if (exec 3<>"/dev/tcp/127.0.0.1/$p") 2>/dev/null; then
+      exec 3<&- 3>&-; log "OK   $name :$p odgovara."
+    else warn "$name :$p ne odgovara."; rc=1; fi
+  done
+  return "$rc"
+}
+
 # ---------- main ----------
 cmd="${1:-help}"; shift || true
 case "$cmd" in
   doctor) cmd_doctor ;;
+  health) cmd_health ;;
   up) cmd_up "$@" ;;
   down) cmd_down "$@" ;;
   status) cmd_status "$@" ;;
