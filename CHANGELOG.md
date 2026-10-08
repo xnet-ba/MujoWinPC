@@ -27,6 +27,12 @@ Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
 - API throttling (120/min) + audit trag, Dependabot (npm + actions),
   shellcheck pin v0.10.0 u CI-ju, docs tense usklađen.
 
+### Dokazano (smoke test bez KVM-a)
+
+- Pun ciklus: ISO → Setup → desktop → backup (5.3 GB) → restore → login →
+  desktop. 6 screenshotova u README galeriji. Boot heuristika uzemljena
+  na stvarni dockur v6.06 log (uključujući OEM dokaz).
+
 ### Dodano (Faza 1)
 
 - CLI `mujowin`: doctor, up, down, status, logs, restart, reset, backup,

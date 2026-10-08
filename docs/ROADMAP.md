@@ -41,7 +41,8 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 ## 5. Persistencija i backup — gotovo/djelimično
 
-- [x] Backup/restore volumena u tar (M)
+- [x] Backup/restore volumena u tar (M) — **ciklus dokazan**: desktop →
+  tar (5.3 GB, ~15 min) → novi volumen → boot → login → desktop (smoke test)
 - [x] Rotacija backupa (`backup --keep N`) (S)
 - [x] Dokumentovano šta preživljava restart/stop/brisanje (README +
   web FAQ + HOSTS; brisanje Codespacea ostaje neprovjereno) (S)

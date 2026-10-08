@@ -25,7 +25,15 @@ Windows image + volumen rastu na desetine GB. `df -h`; o počisti Docker
 (`docker system prune`), o manji profil **prije prvog starta**
 (`DISK_SIZE` ne smanjuje postojeći volumen).
 
-## Backup/restore
+## Backup/restore (dokazano u smoke testu)
+
+- Pun ciklus provjeren: zaustavljen VM → `tar czf` (32 GB sparse volumen →
+  **5.3 GB tar.gz za ~15 min** na brzom hostu) → extract u novi volumen →
+  boot s vraćenog diska (bez re-downloada i Setup-a) → login → desktop.
+- Greška izbjegnuta jednom: compose pravi volumen po svom imenu
+  (`<projekt>_<ime>`); restore mora ići u **isti volumen koji compose
+  koristi** (ili `external: name:` mapiranje), inače se diže prazan disk
+  i kreće svježa instalacija.
 
 - Backup dok VM radi = rizik nekonzistentnosti; CLI upozorava i traži potvrdu.
 - Restore radi samo dok je VM zaustavljen i briše trenutno stanje volumena.

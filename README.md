@@ -209,11 +209,13 @@ Core ✅ • DX ✅ • Sigurnost 🔄 • Performanse ✅ • Backup ✅ • Au
 _Pravi kadrovi sa smoke testa (TCG emulacija bez KVM-a, dockur v6.06):_
 
 <img src="docs/screenshots/setup-starting.png" alt="Windows Setup — Setup is starting, kroz noVNC" width="100%">
-<img src="docs/screenshots/install-progress.png" alt="Windows Setup — Installing Windows, kroz noVNC" width="100%">
 <img src="docs/screenshots/install-updates.png" alt="Windows Setup — Installing updates, kroz noVNC" width="100%">
 <img src="docs/screenshots/devices-ready.png" alt="Windows for Docker boot logo — Getting devices ready, kroz noVNC" width="100%">
+<img src="docs/screenshots/desktop.png" alt="Windows 10 desktop s Edge i Shared folderom, kroz noVNC" width="100%">
+<img src="docs/screenshots/login-restored.png" alt="Login ekran nakon restorea volumena — korisnik Docker" width="100%">
+<img src="docs/screenshots/desktop-restored.png" alt="Desktop nakon restorea volumena" width="100%">
 
-> Windows 10 ISO skinut s Microsoft servera, boot pod QEMU emulacijom, noVNC (port 8006) prikazuje pravi Setup ekran. Puna instalacija pod emulacijom traje dugo (dockur upozorava ~10× sporije bez KVM-a) — za stvarni rad treba KVM host.
+> Cijeli ciklus dokazan na hostu bez KVM-a (emulacija): ISO download → Setup → desktop → `tar` backup (5.3 GB) → restore u novi volumen → boot → login → desktop. Prva dva kadra i zadnja dva su prije/poslije restorea.
 
 ---
 
