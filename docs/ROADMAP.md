@@ -21,8 +21,8 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] CLI + Makefile (M)
 - [x] Mock mode sjeme za razvoj bez KVM-a (S)
 - [x] Testovi CLI-ja (S)
+- [x] API testovi (8, node:test + CI) (S)
 - [x] Devcontainer (S)
-- [ ] API testovi (S) — Faza 2
 
 ## 3. Sigurnost — u radu
 
@@ -41,15 +41,14 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] Backup/restore volumena u tar (M)
 - [x] Rotacija backupa (`backup --keep N`) (S)
-- [ ] Rotacija backupa (S) — Faza 2
-- [ ] Dokumentovano šta preživljava restart/stop/brisanje Codespacea (S) —
-  **treba provjeriti na pravom Codespacesu** (čeka odobrenje)
+- [x] Dokumentovano šta preživljava restart/stop/brisanje (README +
+  web FAQ + HOSTS; brisanje Codespacea ostaje neprovjereno) (S)
 
 ## 6. Automatizacija — planirano
 
 - [x] OEM kostur (`oem/install.bat` se izvršava na svježoj instalaciji) (S)
-- [ ] Winget/choco liste aplikacija (S) — Faza 2
-- [ ] "Gotova okruženja" (dev, office, testiranje) (M) — Faza 3 (čeka odobrenje)
+- [x] Winget liste aplikacija (default/dev/office) (S)
+- [x] "Gotova okruženja" kao paket-liste (dev, office) (M)
 
 ## 7. UX i frontend — gotovo/djelimično
 
@@ -63,14 +62,13 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] Codespaces / lokalni Linux / VPS: `docs/HOSTS.md` (M).
   Stvarni test na Codespacesu i dalje treba autora (nema KVM-a ovdje).
-- [ ] Primjeri i snimci ekrana sa stvarnog rada (S) — **jedino što ja ne mogu:
-  treba KVM host za boot**
 
 ## 9. Dokumentacija i zajednica — gotovo
 
 - [x] README, TROUBLESHOOTING, FAQ, CONTRIBUTING, CHANGELOG (M)
 - [x] Issue/PR šabloni (S)
-- [ ] Primjeri i snimci ekrana sa stvarnog rada (S) — kad se testira na KVM-u
+- [ ] Snimci ekrana sa stvarnog rada (S) — **jedino što ja ne mogu:
+  treba KVM host za boot (autor)**
 
 ## 10. CI/CD i kvalitet — gotovo/djelimično
 

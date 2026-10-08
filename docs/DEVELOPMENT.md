@@ -16,8 +16,10 @@ make lint                   # shellcheck ako postoji, inače bash -n
 |---|---|
 | `make dev` | mock mode + upute za serviranje `web/` (`python3 -m http.server`) |
 | `make lint` | shellcheck (ako instaliran) + `bash -n` za sve skripte |
-| `make test` | `tests/test_cli.sh` |
-| `make doctor` | `./scripts/mujowin doctor` |
+| `make test` | CLI (18) + health/idle (6) + API (8) testovi |
+| `make doctor` / `make health` | `./scripts/mujowin doctor` / `health` |
+| `make down/status/logs` | svakodnevno upravljanje kroz CLI |
+| `make api` | API server (traži token) |
 | `make up PROFILE=standard` | validira compose config pa diže VM |
 | `make config PROFILE=x WIN=11` | samo `docker compose config` (bez dizanja) |
 
