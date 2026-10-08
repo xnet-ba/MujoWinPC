@@ -10,9 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
-        with:
-          scandir: ./scripts
-          additional_files: tests/test_cli.sh
+        # default sken hvata sve .sh u repou (scripts/ + tests/)
       - name: bash syntax (fallback)
         run: bash -n scripts/mujowin && bash -n scripts/lib/common.sh && bash -n tests/test_cli.sh
 
