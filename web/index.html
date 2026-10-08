@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bs" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MujoWinPC — kontrolna ploča</title>
+<meta name="description" content="MujoWinPC: Windows 10/11 desktop u browseru. Status, upute, profili, FAQ.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">🖥️ MujoWinPC</div>
+  <div class="controls">
+    <button id="langBtn" type="button" title="Jezik / Language">EN</button>
+    <button id="themeBtn" type="button" title="Tema">☀️</button>
+  </div>
+</header>
+
+<main>
+  <section class="card" id="status">
+    <h2 data-bs="Status" data-en="Status">Status</h2>
+    <p id="vmState"><span class="dot unknown"></span><span data-bs="Provjera u toku…" data-en="Checking…">Provjera u toku…</span></p>
+    <p class="hint" data-bs="Ploča je statična: stvarno stanje vidi s ‘mujowin status’. Provjera porta je best-effort." data-en="This panel is static: see ‘mujowin status’ for the real state. The port check is best-effort.">Ploča je statična: stvarno stanje vidi s ‘mujowin status’. Provjera porta je best-effort.</p>
+    <div class="actions">
+      <a id="novncLink" class="btn primary" href="#" target="_blank" rel="noopener">🌐 <span data-bs="Otvori Windows (noVNC)" data-en="Open Windows (noVNC)">Otvori Windows (noVNC)</span></a>
+      <span class="rdp"><code>RDP → <span id="rdpHost">localhost:3389</span></code></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-bs="Brzi start" data-en="Quick start">Brzi start</h2>
+    <ol>
+      <li data-bs="Kopiraj .env i postavi JAKU lozinku: cp .env.example .env" data-en="Copy .env and set a STRONG password: cp .env.example .env">Kopiraj .env i postavi JAKU lozinku: <code>cp .env.example .env</code></li>
+      <li><code>./scripts/mujowin doctor</code> <span data-bs="— provjeri KVM, Docker, RAM/CPU/disk" data-en="— check KVM, Docker, RAM/CPU/disk">— provjeri KVM, Docker, RAM/CPU/disk</span></li>
+      <li><code>./scripts/mujowin profile standard</code> <span data-bs="— izaberi profil (ili preporuku iz doctora)" data-en="— pick a profile (or the doctor recommendation)">— izaberi profil (ili preporuku iz doctora)</span></li>
+      <li><code>./scripts/mujowin up</code> <span data-bs="— pokreni; prvi boot skida image pa traje" data-en="— start; first boot downloads the image so it takes a while">— pokreni; prvi boot skida image pa traje</span></li>
+      <li data-bs="Otvori noVNC link iznad i prijavi se." data-en="Open the noVNC link above and sign in.">Otvori noVNC link iznad i prijavi se.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2 data-bs="Profili resursa" data-en="Resource profiles">Profili resursa</h2>
+    <table>
+      <thead><tr><th data-bs="Profil" data-en="Profile">Profil</th><th>RAM</th><th>CPU</th><th data-bs="Disk" data-en="Disk">Disk</th><th data-bs="Za koga" data-en="For">Za koga</th></tr></thead>
+      <tbody>
+        <tr><td><code>lite</code></td><td>4G</td><td>2</td><td>32G</td><td data-bs="slabi hostovi, proba" data-en="weak hosts, trying out">slabi hostovi, proba</td></tr>
+        <tr><td><code>standard</code></td><td>8G</td><td>4</td><td>64G</td><td data-bs="svakodnevni rad" data-en="everyday use">svakodnevni rad</td></tr>
+        <tr><td><code>dev</code></td><td>12G</td><td>4</td><td>80G</td><td data-bs="razvoj u VM-u" data-en="development inside the VM">razvoj u VM-u</td></tr>
+        <tr><td><code>heavy</code></td><td>16G</td><td>8</td><td>128G</td><td data-bs="samo jaki hostovi" data-en="strong hosts only">samo jaki hostovi</td></tr>
+      </tbody>
+    </table>
+    <p class="hint" data-bs="Mijenjanje profila vrijedi od sljedećeg čistog starta (DISK_SIZE samo za novi volumen)." data-en="Profile changes apply from the next fresh start (DISK_SIZE only for a new volume).">Mijenjanje profila vrijedi od sljedećeg čistog starta (DISK_SIZE samo za novi volumen).</p>
+  </section>
+
+  <section class="card">
+    <h2 data-bs="Česta pitanja" data-en="FAQ">Česta pitanja</h2>
+    <details><summary data-bs="Da li mi treba Windows licenca?" data-en="Do I need a Windows license?">Da li mi treba Windows licenca?</summary>
+      <p data-bs="Da. Ti sam odgovaraš za valjanu Windows licencu i Microsoftove uslove. Slika koristi generičke instalacijske ključeve koji nisu aktivacija." data-en="Yes. You are responsible for a valid Windows license and Microsoft's terms. The image uses generic setup keys that are not activation.">Da. Ti sam odgovaraš za valjanu Windows licencu i Microsoftove uslove. Slika koristi generičke instalacijske ključeve koji nisu aktivacija.</p></details>
+    <details><summary data-bs="Šta ako nema /dev/kvm?" data-en="What if there is no /dev/kvm?">Šta ako nema /dev/kvm?</summary>
+      <p data-bs="Bez KVM-a VM radi u softverskoj emulaciji — ekstremno sporo ili nikako. Treba ti host s KVM-om. ‘mujowin doctor’ to jasno kaže." data-en="Without KVM the VM runs in software emulation — extremely slow or not at all. You need a KVM-capable host. ‘mujowin doctor’ says so clearly.">Bez KVM-a VM radi u softverskoj emulaciji — ekstremno sporo ili nikako. Treba ti host s KVM-om. ‘mujowin doctor’ to jasno kaže.</p></details>
+    <details><summary data-bs="Da li podaci preživljavaju restart?" data-en="Does data survive a restart?">Da li podaci preživljavaju restart?</summary>
+      <p data-bs="Restart kontejnera i stop/start Codespacea: da (named volume). ‘mujowin reset’ ili brisanje Codespacea: ne. Backup pravi ‘mujowin backup’." data-en="Container restart and Codespace stop/start: yes (named volume). ‘mujowin reset’ or deleting the Codespace: no. Back up with ‘mujowin backup’.">Restart kontejnera i stop/start Codespacea: da (named volume). ‘mujowin reset’ ili brisanje Codespacea: ne. Backup pravi ‘mujowin backup’.</p></details>
+    <details><summary data-bs="Ima li GPU?" data-en="Is there a GPU?">Ima li GPU?</summary>
+      <p data-bs="Ne — Codespaces i tipični VPS-ovi nemaju GPU za VM. Grafika ide preko noVNC-a." data-en="No — Codespaces and typical VPS hosts have no GPU for the VM. Graphics go over noVNC.">Ne — Codespaces i tipični VPS-ovi nemaju GPU za VM. Grafika ide preko noVNC-a.</p></details>
+  </section>
+
+  <section class="card">
+    <h2 data-bs="Rješavanje problema" data-en="Troubleshooting">Rješavanje problema</h2>
+    <ul>
+      <li><code>up</code> <span data-bs="se odbija → postavi WINDOWS_PASSWORD u .env (ne defaultnu)." data-en="refuses → set WINDOWS_PASSWORD in .env (not a default).">se odbija → postavi WINDOWS_PASSWORD u .env (ne defaultnu).</span></li>
+      <li><span data-bs="Crn ekran na 8006 → sačekaj boot, pa " data-en="Black screen on 8006 → wait for boot, then ">Crn ekran na 8006 → sačekaj boot, pa </span><code>mujowin logs</code>.</li>
+      <li><span data-bs="Port zauzet → promijeni WEB_PORT/RDP_PORT u .env." data-en="Port busy → change WEB_PORT/RDP_PORT in .env.">Port zauzet → promijeni WEB_PORT/RDP_PORT u .env.</span></li>
+      <li><span data-bs="Sporo → slabiji profil + zatvori ostalo; detalji u " data-en="Slow → weaker profile + close other apps; details in ">Sporo → slabiji profil + zatvori ostalo; detalji u </span><code>docs/TROUBLESHOOTING.md</code>.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <span>MujoWinPC · MIT · </span><a href="https://github.com/dockur/windows" target="_blank" rel="noopener">dockurr/windows</a>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

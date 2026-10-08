@@ -1,0 +1,44 @@
+/* MujoWinPC ploča: responzivno, tamna/svijetla tema, bez frameworka. */
+:root, [data-theme="dark"] {
+  --bg: #14171c; --card: #1d2129; --text: #e8eaf0; --muted: #9aa1b2;
+  --accent: #4f9cf9; --border: #2c3340; --ok: #3ecf6e; --bad: #e5484d;
+}
+[data-theme="light"] {
+  --bg: #f4f5f7; --card: #ffffff; --text: #1a1d23; --muted: #5b6474;
+  --accent: #0b62d6; --border: #dde1e8; --ok: #12805c; --bad: #c81e2b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { display: flex; justify-content: space-between; align-items: center;
+  padding: .7rem 1rem; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); }
+.brand { font-weight: 700; font-size: 1.15rem; }
+.controls button { margin-left: .5rem; padding: .35rem .7rem; cursor: pointer;
+  background: var(--card); color: var(--text); border: 1px solid var(--border);
+  border-radius: .5rem; }
+main { max-width: 860px; margin: 0 auto; padding: 1rem; }
+.card { background: var(--card); border: 1px solid var(--border);
+  border-radius: .75rem; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+h2 { margin-top: 0; font-size: 1.2rem; }
+.hint { color: var(--muted); font-size: .9rem; }
+code { background: var(--bg); border: 1px solid var(--border);
+  border-radius: .35rem; padding: .05rem .4rem; font-size: .9em; }
+.actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.btn { text-decoration: none; padding: .55rem 1rem; border-radius: .55rem;
+  border: 1px solid var(--border); color: var(--text); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dot { display: inline-block; width: .7em; height: .7em; border-radius: 50%;
+  background: var(--muted); margin-right: .5em; }
+.dot.ok { background: var(--ok); } .dot.bad { background: var(--bad); }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--border); }
+details { border: 1px solid var(--border); border-radius: .5rem;
+  padding: .5rem .8rem; margin-bottom: .5rem; }
+summary { cursor: pointer; font-weight: 600; }
+footer { text-align: center; color: var(--muted); padding: 1.5rem; font-size: .9rem; }
+footer a { color: var(--accent); }
+@media (max-width: 600px) {
+  body { font-size: 15px; } main { padding: .6rem; }
+  .card { padding: .8rem; } table { font-size: .85rem; }
+}
