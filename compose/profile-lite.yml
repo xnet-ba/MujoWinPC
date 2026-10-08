@@ -1,0 +1,7 @@
+# lite: najmanja potrošnja. Naše vrijednosti (izbor projekta, ne tvrdnja o minimumu).
+services:
+  windows:
+    environment:
+      RAM_SIZE: "4G"
+      CPU_CORES: "2"
+      DISK_SIZE: "32G"

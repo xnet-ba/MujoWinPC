@@ -1,0 +1,29 @@
+# MujoWinPC baza. Ne pokreći je samu: mujowin uvijek doda
+# compose/win{10,11}.yml i compose/profile-<ime>.yml.
+# Env imena i defaulti prema dockur/windows docs/environment.md (provjereno).
+services:
+  windows:
+    image: dockurr/windows
+    container_name: mujowin-windows
+    environment:
+      VERSION: "${WINDOWS_VERSION:?WINDOWS_VERSION nije postavljen (vidi .env)}"
+      USERNAME: "${WINDOWS_USERNAME:?WINDOWS_USERNAME nije postavljen (vidi .env)}"
+      PASSWORD: "${WINDOWS_PASSWORD:?WINDOWS_PASSWORD nije postavljena (vidi .env)}"
+      # RAM/CPU/DISK dolaze iz compose/profile-*.yml
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "${WEB_PORT:-8006}:8006"
+      - "${RDP_PORT:-3389}:3389/tcp"
+      - "${RDP_PORT:-3389}:3389/udp"
+    volumes:
+      - mujowin-storage:/storage
+      - ./oem:/oem:ro
+    stop_grace_period: 2m
+    restart: unless-stopped
+
+volumes:
+  mujowin-storage:

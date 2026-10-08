@@ -1,0 +1,5 @@
+# Windows 11 varijanta (dockur VERSION: "11", isto kao default).
+services:
+  windows:
+    environment:
+      VERSION: "11"

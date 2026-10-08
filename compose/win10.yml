@@ -1,0 +1,5 @@
+# Windows 10 varijanta (dockur VERSION: "10").
+services:
+  windows:
+    environment:
+      VERSION: "10"

@@ -1,0 +1,7 @@
+# heavy: najviše resursa. Samo na jakim hostovima (doctor provjerava).
+services:
+  windows:
+    environment:
+      RAM_SIZE: "16G"
+      CPU_CORES: "8"
+      DISK_SIZE: "128G"

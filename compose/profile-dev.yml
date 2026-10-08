@@ -1,0 +1,7 @@
+# dev: za razvoj u VM-u (IDE, build alati).
+services:
+  windows:
+    environment:
+      RAM_SIZE: "12G"
+      CPU_CORES: "4"
+      DISK_SIZE: "80G"
