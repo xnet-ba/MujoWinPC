@@ -65,7 +65,7 @@ jobs:
     defaults: { run: { working-directory: server } }
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with: { node-version: "22", cache: npm, cache-dependency-path: server/package-lock.json }
       - run: npm ci
       - run: node --check index.js && node --check mujowin.js && node --check resources.js && node --check boot.js
