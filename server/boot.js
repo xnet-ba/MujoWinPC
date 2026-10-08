@@ -1,13 +1,16 @@
 "use strict";
 // Boot faza: deterministički dio (kontejner radi/ne) + heuristika iz logova.
-// Heuristika je best-effort: dockur log format nije ugovoren i može se promijeniti.
+// Obrasci su uzeti iz STVARNOG dockur v6.06 loga (smoke test bez KVM-a):
+// "Downloading Windows 10...", "Adding OEM files to image...",
+// "Starting Windows for Docker v6.06...", "Windows started successfully...".
+// Format se može promijeniti s verzijom image-a → i dalje best-effort.
 const { mock, mockPhase, runCli } = require("./mujowin");
 
 const RULES = [
-  [/desktop|oobe.*done|setup.*complete/i, "ready"],
-  [/install|unattend|oobe|setup/i, "installing"],
-  [/download|pull|extract/i, "downloading"],
-  [/qemu|seabios|boot/i, "starting"],
+  [/windows started successfully/i, "ready"],
+  [/adding .*xml for automatic installation|adding drivers|adding oem files|creating overlay|writing overlay/i, "installing"],
+  [/requesting windows|downloading windows/i, "downloading"],
+  [/starting windows for docker|booting windows using qemu|bdsdxe/i, "starting"],
 ];
 
 async function boot() {

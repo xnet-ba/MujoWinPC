@@ -32,6 +32,25 @@ Windows image + volumen rastu na desetine GB. `df -h`; o počisti Docker
 - Restore na drugu `DISK_SIZE` vrijednost: radi, ali particiju eventualno
   proširi ručno u Windows Disk Managementu (dockur napomena).
 
+## Kako izgleda zdrav boot (stvarni log, dockur v6.06)
+
+```
+❯ Adding win10x64.xml for automatic installation...
+❯ Requesting Windows 10 from the Microsoft servers...
+❯ Downloading Windows 10...
+10% → 20% → ... → 100%
+❯ Adding drivers to image...
+❯ Adding OEM files to image...     ← dokaz da je /oem mount radio
+❯ Starting Windows for Docker v6.06...
+❯ Booting Windows using QEMU v11.1.1...
+❯ Windows started successfully, visit http://:8006/ ...
+```
+
+"started successfully" znači da je kontejner digao VM — Windows Setup
+unutra još traje (prati kroz noVNC). Ako log stane na `Downloading`
+duže vrijeme: spora mreža, pusti ga. Ako se vrti `BdsDxe ... DVD-ROM`:
+boot s instalacijskog medija je u toku, to je normalno.
+
 ## API problemi
 
 - **401 na sve** → loš token ili ga nema. Token iz `.env` (`MUJO_API_TOKEN`)
