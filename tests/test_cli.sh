@@ -60,6 +60,19 @@ assert_fails "reset bez potvrde pada" sh -c "echo NE | $CLI reset"
 # 9. backup mock (VM nije pokrenut u mocku)
 assert_contains "$(printf '' | "$CLI" backup test-backup.tar.gz 2>&1)" "[mock]" "backup mock"
 
+# 9b. rotacija: izolovan MUJO_ROOT s lažnim starim backupima
+TROOT="$(mktemp -d)"
+mkdir -p "$TROOT/backups"
+touch -d '10 days ago' "$TROOT/backups/mujowin-backup-star1.tar.gz"
+touch -d '9 days ago' "$TROOT/backups/mujowin-backup-star2.tar.gz"
+touch -d '8 days ago' "$TROOT/backups/mujowin-backup-star3.tar.gz"
+MUJO_ROOT_OVERRIDE="$TROOT" WINDOWS_PASSWORD="jaka-lozinka-123" "$CLI" backup --keep 2 >/dev/null 2>&1
+left="$(ls "$TROOT/backups" | wc -l)"
+[ "$left" = 2 ] && ok "rotacija --keep 2" || fail "rotacija --keep 2" "ostalo $left fajlova"
+[ -e "$TROOT/backups/mujowin-backup-star3.tar.gz" ] && ok "rotacija čuva najnoviji" || fail "rotacija čuva najnoviji"
+assert_fails "rotacija --keep bez broja pada" sh -c "MUJO_ROOT_OVERRIDE=$TROOT $CLI backup --keep"
+rm -rf "$TROOT"
+
 # 10. restore bez fajla pada
 assert_fails "restore nepostojećeg pada" "$CLI" restore nema-ovog.tar.gz
 

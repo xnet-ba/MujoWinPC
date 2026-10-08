@@ -6,6 +6,8 @@
    `mujowin up` odbija prazne i defaultne (`admin`, `password`, `123456`, `docker`).
 2. **RDP (3389) ne izlaži javno bez potrebe.** Na Codespacesu drži port Private
    osim kad aktivno pristupaš; jaka lozinka je obavezna, ne opciona.
+   Isto vrijedi za noVNC port (8006): Public samo dok se spajaš, inače Private.
+   Pravilo: nijedan port ne stoji javno duže nego što mora.
 3. **noVNC (8006) nema svoju autentifikaciju** u Fazi 1 (dockur `PROTECT`
    varijanta nije uključena — namjerno, da se ne lažira sigurnost).
    Zaštita = vidljivost porta + Codespaces auth. Autentifikacija ploče dolazi

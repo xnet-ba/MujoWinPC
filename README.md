@@ -38,6 +38,7 @@ uklonjen).
 6. Prijavi se podacima iz `.env`. RDP: port 3389.
 
 Lokalni Linux s KVM-om: isto, samo radi `make doctor` prije `up`-a.
+Detaljna checklista: `docs/FIRST_START.md`.
 
 ## CLI komande
 

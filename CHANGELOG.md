@@ -13,6 +13,8 @@ Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
 - Mock mode API-ja (`MUJO_MOCK=1`, ephemeral token) + 8 API testova.
 - OEM winget liste: `packages.txt` (default), `-dev`, `-office`.
 - `mujowin status --json` za mašinsko čitanje.
+- Rotacija backupa (`backup --keep N`), `docs/FIRST_START.md`,
+  privatni portovi dokumentovani, shellcheck čist (0 upozorenja).
 
 ### Dodano (Faza 1)
 

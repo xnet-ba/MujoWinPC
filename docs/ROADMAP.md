@@ -40,6 +40,7 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 ## 5. Persistencija i backup — gotovo/djelimično
 
 - [x] Backup/restore volumena u tar (M)
+- [x] Rotacija backupa (`backup --keep N`) (S)
 - [ ] Rotacija backupa (S) — Faza 2
 - [ ] Dokumentovano šta preživljava restart/stop/brisanje Codespacea (S) —
   **treba provjeriti na pravom Codespacesu** (čeka odobrenje)
@@ -54,10 +55,9 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 
 - [x] Ploča: status, noVNC link, profili, FAQ (M)
 - [x] Live kontrola (start/stop/logovi/resursi/boot) preko API-ja (M)
-- [ ] Vodič kroz prvi start (S) — Faza 2
+- [x] Vodič kroz prvi start (`docs/FIRST_START.md`) (S)
 - [x] bs/en, tamna/svijetla tema, mobilni prikaz (S)
-- [ ] Vodič kroz prvi start (S) — Faza 2
-- [ ] Boot progress + resursi uživo (M) — Faza 2 (treba API)
+- [x] Boot progress + resursi uživo (M)
 
 ## 8. Kompatibilnost i hostovi — planirano
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Privremena validacija svih win x profil kombinacija.
 set -u
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 fail=0
 for win in 10 11; do
   for prof in lite standard dev heavy; do
@@ -15,7 +15,7 @@ for win in 10 11; do
   done
 done
 # negativan test: prazna lozinka mora pasti
-if WINDOWS_PASSWORD= docker compose --env-file .env \
+if WINDOWS_PASSWORD='' docker compose --env-file .env \
   -f compose/base.yml -f compose/win11.yml -f compose/profile-standard.yml \
   config >/dev/null 2>&1; then
   echo "FAIL prazna-lozinka-prosla"; fail=1

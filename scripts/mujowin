@@ -17,11 +17,11 @@ Upotreba: mujowin <komanda> [opcije]
   doctor            provjeri okruženje (KVM, Docker, RAM/CPU/disk, lozinka)
   up                pokreni Windows VM (odbija bez lozinke)
   down              zaustavi VM (podaci ostaju u volumenu)
-  status            prikaži stanje kontejnera
+  status [--json]     prikaži stanje kontejnera (--json za API)
   logs [-f]         prikaži logove (dodaj -f za praćenje)
   restart           restartuj VM
   reset             OBRIŠI volumen s podacima (traži eksplicitnu potvrdu)
-  backup [ime]      snimi volumen u tar (VM treba biti zaustavljen)
+  backup [ime] [--keep N]  snimi volumen u tar (VM treba biti zaustavljen)
   restore <tar>     vrati volumen iz tar-a (VM mora biti zaustavljen)
   profile <ime>     postavi profil: lite | standard | dev | heavy
   help              ova pomoć
@@ -32,11 +32,12 @@ EOF
 }
 
 compose() {
-  # shellcheck disable=SC2086
+  # shellcheck disable=SC2046 # namjerno word splitting -f liste
   docker compose --env-file "$ENV_FILE" $(compose_files) "$@"
 }
 
 vm_running() {
+  mock_on && return 1
   compose ps --status running --services 2>/dev/null | grep -q '^windows$'
 }
 
@@ -146,8 +147,15 @@ cmd_down() {
 
 cmd_status() {
   require_docker
-  if mock_on; then printf '[mock] windows: running (profil=%s)\n' "$(active_profile)"; return 0; fi
-  compose ps
+  if mock_on; then
+    if [ "${1:-}" = "--json" ]; then
+      printf '[{"Name":"%s-windows","State":"running"}]\n' "$COMPOSE_PROJECT_NAME"
+    else
+      printf '[mock] windows: running (profil=%s)\n' "$(active_profile)"
+    fi
+    return 0
+  fi
+  if [ "${1:-}" = "--json" ]; then compose ps --format json; else compose ps; fi
 }
 
 cmd_logs() {
@@ -176,7 +184,15 @@ cmd_reset() {
 
 cmd_backup() {
   require_docker
-  local name="${1:-mujowin-backup-$(date +%Y%m%d-%H%M%S).tar.gz}"
+  local name="" keep=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --keep) [ $# -ge 2 ] || die "--keep traži broj (npr. --keep 5)."; keep="$2"; shift 2 ;;
+      --keep=*) keep="${1#--keep=}"; shift ;;
+      *) name="$1"; shift ;;
+    esac
+  done
+  [ -z "$name" ] && name="mujowin-backup-$(date +%Y%m%d-%H%M%S).tar.gz"
   mkdir -p "$BACKUP_DIR"
   if vm_running && ! mock_on; then
     warn "VM je pokrenut — backup može biti nekonzistentan. Zaustavi ga ('mujowin down') ili potvrdi."
@@ -186,10 +202,23 @@ cmd_backup() {
   fi
   # ponytail: procjena veličine prije backupa bi bila ljepša; du za velike volumene traje, pa samo upozoravamo
   warn "Backup volumena može biti velik (deseci GB). Provjeri slobodan prostor (df -h)."
-  if mock_on; then log "[mock] backup -> $BACKUP_DIR/$name"; return 0; fi
-  docker run --rm -v "$VOLUME:/data:ro" -v "$BACKUP_DIR:/backup" alpine \
-    tar czf "/backup/$name" -C /data .
-  log "Backup gotov: $BACKUP_DIR/$name"
+  if mock_on; then log "[mock] backup -> $BACKUP_DIR/$name"; else
+    docker run --rm -v "$VOLUME:/data:ro" -v "$BACKUP_DIR:/backup" alpine \
+      tar czf "/backup/$name" -C /data .
+    log "Backup gotov: $BACKUP_DIR/$name"
+  fi
+  [ -n "$keep" ] && prune_backups "$keep"
+}
+
+# Rotacija: zadrži N najnovijih mujowin-backup-*.tar.gz, ostale obriši.
+prune_backups() {
+  local keep="$1" n=0 f
+  case "$keep" in ''|*[!0-9]*) die "--keep traži broj (npr. --keep 5)." ;; esac
+  while IFS= read -r f; do
+    n=$((n + 1))
+    if [ "$n" -gt "$keep" ]; then log "Rotacija: brišem $(basename "$f")"; rm -f "$f"; fi
+  done < <(find "$BACKUP_DIR" -maxdepth 1 -name 'mujowin-backup-*.tar.gz' -printf '%T@\t%p\n' 2>/dev/null | sort -rn | cut -f2-)
+  log "Rotacija gotova: zadržano najviše $keep backupa."
 }
 
 cmd_restore() {
