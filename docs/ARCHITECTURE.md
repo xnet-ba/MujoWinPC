@@ -8,7 +8,7 @@ browser ──:8006──▶ [dockurr/windows kontejner] ── QEMU/KVM ──�
    │                    │  /oem (ro) = post-install skripte
    └ RDP :3389 ─────────┘
 mujowin CLI ──▶ docker compose (base + winXX + profil) ──▶ isti kontejner
-web/ ploča ── statična (Faza 1); API + live status tek u Fazi 2
+web/ ploča ── statična baza + live dio preko API-ja
 ```
 
 ## Slojevi
@@ -25,8 +25,8 @@ web/ ploča ── statična (Faza 1); API + live status tek u Fazi 2
 4. **Podaci**: jedan named volume (`mujowin-storage:/storage`, prefiksiran
    projektom `mujowin`). Backup/restore = tar cijelog volumena dok VM stoji.
    `DISK_SIZE` vrijedi samo za novi volumen — promjena profila ne resizea disk.
-5. **Web** (`web/`): statična ploča, nula zavisnosti. U Fazi 1 ne priča ni s kim
-   (osim best-effort fetch-a noVNC porta); API dolazi u Fazi 2.
+5. **Web** (`web/`): statična baza + live kontrola kroz API
+   (osim best-effort fetch-a noVNC porta kad API-ja nema).
 6. **OEM** (`oem/`): montira se na `/oem` (read-only). dockur kopira sadržaj u
    `C:\OEM` i izvrši `install.bat` na kraju automatske instalacije (provjereno
    u dockur README-u). Radi samo na svježoj instalaciji, ne na svakom bootu.

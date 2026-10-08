@@ -34,7 +34,26 @@ function authed(req) {
   return d.length === DIGEST.length && crypto.timingSafeEqual(d, DIGEST);
 }
 
+// Audit trag: svaki API poziv u stdout (čitaju ga journald/docker logs).
+app.use("/api", (req, res, next) => {
+  const t = Date.now();
+  res.on("finish", () => console.log(`[api] ${req.ip} ${req.method} ${req.path} ${res.statusCode} ${Date.now() - t}ms`));
+  next();
+});
+
+// Throttling prije auth-a (brute-force tokena takođe troši kvotu).
+// Ploča polla ~3 endpointa / 5s (≈36/min) — limit 120/min ima lufta.
+const HITS = new Map();
+setInterval(() => HITS.clear(), 60 * 1000).unref();
+app.use("/api", (req, res, next) => {
+  const n = (HITS.get(req.ip) || 0) + 1;
+  HITS.set(req.ip, n);
+  if (n > 120) return res.status(429).json({ ok: false, error: "previše zahtjeva, uspori" });
+  next();
+});
+
 app.get("/api/health", (req, res) => res.json({ ok: true, mock: mock() }));
+
 app.use("/api", (req, res, next) => {
   if (!authed(req)) return res.status(401).json({ ok: false, error: "neautorizovano" });
   next();

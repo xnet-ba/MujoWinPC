@@ -10,8 +10,8 @@
    Pravilo: nijedan port ne stoji javno duže nego što mora.
 3. **noVNC (8006) nema svoju autentifikaciju** u Fazi 1 (dockur `PROTECT`
    varijanta nije uključena — namjerno, da se ne lažira sigurnost).
-   Zaštita = vidljivost porta + Codespaces auth. Autentifikacija ploče dolazi
-   u Fazi 2 s API-jem.
+   Zaštita = vidljivost porta + Codespaces auth. Ploča od Faze 2 ima
+   token-autentifikaciju prema API-ju (vidi tačku 5).
 4. **Docker socket se nigdje ne mounta** u kontejnere i ne izlaže mrežno.
 5. **API token** (`MUJO_API_TOKEN`, 32+ hex znaka): server se bez njega odbija
    startati (non-mock). Poređenje je timing-safe. Samo `/api/health` je bez
@@ -29,7 +29,13 @@
 - Poslije korištenja: port nazad na Private, `mujowin down` kad VM ne treba.
 - Nikad istu lozinku kao za GitHub/Microsoft nalog.
 
-## Šta NIJE pokriveno u Fazi 1 (vidi ROADMAP → Sigurnost)
+7. **Throttling**: 120 zahtjeva/min po IP-u na cijelom `/api`
+   (prije auth-a, pa i brute-force troši kvotu). Ploča troši ~36/min.
+8. **Audit trag**: svaki API poziv (IP, metod, putanja, status, ms) ide
+   u stdout — čitaju ga `docker logs` / journald.
 
-Autentifikacija web ploče, TLS završetak, audit log, rotacija tajni,
-skeniranje image-a, rate limiting API-ja. Nemoj koristiti za osjetljive podatke dok to ne postoji.
+## Šta NIJE pokriveno (vidi ROADMAP → Sigurnost)
+
+TLS završetak, rotacija tajni, skeniranje image-a je u CI-ju (Trivy,
+neblokirajuće jer je image uzvodni). Nemoj koristiti za osjetljive podatke
+dok TLS ne postoji.

@@ -22,6 +22,11 @@ Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
   `scripts/idle-stop.sh` (cron primjer), `docs/HOSTS.md`.
 - CI: Trivy sken (neblokirajući), Release workflow na `v*` tagove.
 
+### Dodano (zatvaranje gapova, bez verzije)
+
+- API throttling (120/min) + audit trag, Dependabot (npm + actions),
+  shellcheck pin v0.10.0 u CI-ju, docs tense usklađen.
+
 ### Dodano (Faza 1)
 
 - CLI `mujowin`: doctor, up, down, status, logs, restart, reset, backup,

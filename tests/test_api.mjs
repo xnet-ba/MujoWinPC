@@ -91,3 +91,12 @@ test("server se odbija bez tokena (non-mock)", async () => {
   const code = await new Promise((res) => p.on("exit", res));
   assert.equal(code, 1);
 });
+
+test("throttling: 120+/min → 429 (mora biti zadnji test prema serveru)", async () => {
+  let limited = 0;
+  for (let i = 0; i < 130; i++) {
+    const r = await fetch(`${BASE}/api/health`);
+    if (r.status === 429) limited++;
+  }
+  assert.ok(limited > 0, "očekivan bar jedan 429");
+});

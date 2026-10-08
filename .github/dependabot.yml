@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /server
+    schedule: { interval: monthly }
+    labels: [dependencies]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    labels: [dependencies]

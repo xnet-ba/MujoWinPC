@@ -30,6 +30,8 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] SECURITY.md + RDP savjeti (S)
 - [x] Privatni portovi dokumentovani (SECURITY + HOSTS) (S)
 - [x] Autentifikacija ploče/API-ja tokenom (M)
+- [x] Throttling (120/min/IP) + audit trag poziva (S)
+- [ ] TLS završetak, rotacija tajni (M) — otvoreno
 
 ## 4. Performanse i resursi — planirano
 
