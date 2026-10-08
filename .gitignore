@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.vscode/
+.idea/
+
+# Secrets i lokalno stanje (nikad u git)
+.env
+.mujowin-profile
+*.log
+
+# Docker / VM podaci
+windows/
+backups/*.tar.gz
+!backups/.gitkeep
+
+# Node (Faza 2)
+node_modules/
+server/node_modules/
+
+# Python
+__pycache__/
+.venv/
