@@ -187,7 +187,7 @@ Detalji: [`docs/HOSTS.md`](docs/HOSTS.md)
 
 ## 🗺️ Roadmap (sažetak)
 
-Core ✅ • DX ✅ • Sigurnost 🔄 • Performanse ✅ • Backup ✅ • Automatizacija ✅ • UX ✅ • Hostovi ✅/🔄 • Docs ✅ • CI ✅. Pojedinačno s težinama S/M/L: [`docs/ROADMAP.md`](docs/ROADMAP.md). Preostalo netestirano na pravom KVM hostu: boot, OEM winget, snimci ekrana.
+Core ✅ • DX ✅ • Sigurnost ✅ (TLS otvoren) • Performanse ✅ • Backup ✅ • Automatizacija ✅ • UX ✅ • Hostovi ✅ (pravi KVM test čeka) • Docs ✅ • CI ✅. Pojedinačno s težinama S/M/L: [`docs/ROADMAP.md`](docs/ROADMAP.md). Preostalo za KVM host: boot punom brzinom, OEM winget provjera.
 
 ---
 

@@ -33,7 +33,7 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] Throttling (120/min/IP) + audit trag poziva (S)
 - [ ] TLS završetak, rotacija tajni (M) — otvoreno
 
-## 4. Performanse i resursi — planirano
+## 4. Performanse i resursi — gotovo
 
 - [x] Auto-profil: `mujowin profile auto` (S)
 - [x] Idle auto-stop skripta (`scripts/idle-stop.sh`, cron primjer) (M).
@@ -47,7 +47,7 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] Dokumentovano šta preživljava restart/stop/brisanje (README +
   web FAQ + HOSTS; brisanje Codespacea ostaje neprovjereno) (S)
 
-## 6. Automatizacija — planirano
+## 6. Automatizacija — gotovo
 
 - [x] OEM kostur (`oem/install.bat` se izvršava na svježoj instalaciji) (S)
 - [x] Winget liste aplikacija (default/dev/office) (S)
@@ -61,7 +61,7 @@ Legenda statusa: `planirano` · `u radu` · `gotovo`. Težina: S / M / L.
 - [x] bs/en, tamna/svijetla tema, mobilni prikaz (S)
 - [x] Boot progress + resursi uživo (M)
 
-## 8. Kompatibilnost i hostovi — planirano
+## 8. Kompatibilnost i hostovi — gotovo (test na pravom KVM-u čeka autora)
 
 - [x] Codespaces / lokalni Linux / VPS: `docs/HOSTS.md` (M).
   Stvarni test na Codespacesu i dalje treba autora (nema KVM-a ovdje).

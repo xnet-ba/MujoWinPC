@@ -2,6 +2,22 @@
 
 Format: Keep a Changelog (opušteno) + SemVer kad krenu tagovi.
 
+## [0.4.0] — 2026-10-08
+
+- API throttling (120/min) + audit trag, Dependabot, shellcheck pin v0.10.0.
+- Dependabot mergeano: setup-node v6, setup-python v7, checkout v7, express 5.2.1
+  (API testovi 9/9 prolaze na express 5).
+
+## [0.3.0] — 2026-10-08
+
+- `mujowin health`, `profile auto`, `scripts/idle-stop.sh`, `docs/HOSTS.md`.
+- CI: Trivy sken (neblokirajući), Release workflow.
+
+## [0.2.0] — 2026-10-08
+
+- Faza 1 (CLI, compose, profili, ploča, docs) + Faza 2 (API, live ploča,
+  mock mode, OEM paketi).
+
 ## [Unreleased]
 
 ### Dodano (Faza 2)
