@@ -29,6 +29,9 @@ assert_fails() { # name cmd...
 # 1. help radi
 assert_contains "$("$CLI" help 2>&1)" "mujowin <komanda>" "help ispis"
 
+# 1b. radi i iz drugog direktorija (compose relativne putanje)
+assert_contains "$(cd /tmp && MUJO_MOCK=1 "$CLI" profile 2>&1)" "Aktivan profil" "radi izvan repo roota"
+
 # 2. nepoznata komanda pada
 assert_fails "nepoznata komanda pada" "$CLI" nepostojeca
 

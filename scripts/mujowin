@@ -36,7 +36,8 @@ EOF
 
 compose() {
   # shellcheck disable=SC2046 # namjerno word splitting -f liste
-  docker compose --env-file "$ENV_FILE" $(compose_files) "$@"
+  ( cd "$MUJO_ROOT" || exit 1
+    docker compose --env-file "$ENV_FILE" $(compose_files) "$@" )
 }
 
 vm_running() {
