@@ -14,12 +14,15 @@ die()  { printf '[mujowin][GREŠKA] %s\n' "$*" >&2; exit 1; }
 # Učitaj .env ako postoji (bez izvršavanja nepoznatog koda: samo KEY=VALUE linije).
 load_env() {
   [ -f "$ENV_FILE" ] || return 0
+  local k v pre
+  pre=" $(export -p | sed -n 's/^declare -x \([A-Za-z_][A-Za-z0-9_]*\)=.*/\1/p' | tr '\n' ' ') "
   while IFS='=' read -r k v; do
     case "$k" in ''|\#*) continue ;; esac
     k="$(printf '%s' "$k" | tr -d '[:space:]')"
     v="$(printf '%s' "$v" | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
     case "$k" in WINDOWS_*|MUJO_*|WEB_PORT|RDP_PORT) : ;; *) continue ;; esac
-    if [ -z "${!k+x}" ]; then export "$k=$v"; fi  # eksplicitni env pobjeđuje .env
+    case "$pre" in *" $k "*) continue ;; esac  # pravi env ostaje, fajl ne gazi
+    export "$k=$v"  # unutar fajla zadnja linija pobjeđuje
   done < "$ENV_FILE"
 }
 
