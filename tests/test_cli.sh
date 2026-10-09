@@ -60,10 +60,17 @@ assert_fails "logs --tail bez broja pada" "$CLI" logs --tail
 assert_fails "logs --tail tekst pada" "$CLI" logs --tail abc
 assert_contains "$("$CLI" logs 2>&1)" "[mock]" "logs mock"
 
+# 7b. custom-iso.local.yml se doda u compose listu kad postoji
+TISO="$(mktemp -d)"
+mkdir -p "$TISO/compose"
+printf 'services:\n  windows:\n    volumes: []\n' > "$TISO/compose/custom-iso.local.yml"
+assert_contains "$(MUJO_ROOT_OVERRIDE="$TISO" "$CLI" up 2>&1)" "custom-iso.local.yml" "custom-iso override"
+rm -rf "$TISO"
+
 # 8. reset bez potvrde pada (daj NE na stdin)
 assert_fails "reset bez potvrde pada" sh -c "echo NE | $CLI reset"
 
-# 9. backup mock (VM nije pokrenut u mocku)
+# 9b. rotacija: izolovan MUJO_ROOT s lažnim starim backupima
 assert_contains "$(printf '' | "$CLI" backup test-backup.tar.gz 2>&1)" "[mock]" "backup mock"
 
 # 9b. rotacija: izolovan MUJO_ROOT s lažnim starim backupima

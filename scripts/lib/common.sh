@@ -34,11 +34,15 @@ active_profile() {
 
 windows_version() { printf '%s' "${WINDOWS_VERSION:-11}"; }
 
-# compose -f lista: base + win-verzija + profil
+# compose -f lista: base + win-verzija + profil (+ custom-iso override ako postoji).
+# custom-iso.local.yml (gitignorean): npr. "- ./win11.iso:/custom.iso:ro"
+# za hostove kojima Microsoft blokira automated download (dokazano na terenu).
 compose_files() {
-  local ver prof
+  local ver prof out
   ver="$(windows_version)"; prof="$(active_profile)"
-  printf -- '-f compose/base.yml -f compose/win%s.yml -f compose/profile-%s.yml' "$ver" "$prof"
+  out="-f compose/base.yml -f compose/win${ver}.yml -f compose/profile-${prof}.yml"
+  [ -f "$MUJO_ROOT/compose/custom-iso.local.yml" ] && out="$out -f compose/custom-iso.local.yml"
+  printf '%s' "$out"
 }
 
 # Mock mode za razvoj bez KVM-a (Faza 2 ga širi; ovdje minimalno za testove).
