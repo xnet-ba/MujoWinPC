@@ -10,6 +10,7 @@
   </p>
   <p><b>Windows 10/11 desktop u browseru</b> — Docker + Codespaces + CLI + profili + kontrolna ploča.<br>
   🇧🇦 <a href="#mujowinpc">Bosanski</a> • 🇬🇧 <a href="#english-short-version">English</a></p>
+  <p>🔬 <b>Status testiranja (oktobar 2026):</b> pun ciklus dokazan pod emulacijom (ISO → Setup → desktop → backup 5.3 GB → restore → login → desktop, 6 screenshotova ispod) + <b>KVM field test u toku</b> na pravom hardveru (Ryzen AI 9, WSL2 + nested KVM). Testovi: <b>38/38</b> (CLI 23, health/idle 6, API 9), CI zeleno.</p>
 </div>
 
 ---
@@ -155,6 +156,15 @@ Server servira i ploču (isti port), sluša `127.0.0.1:3001`, token u `sessionSt
 ## ⚙️ Konfiguracija (.env)
 
 `WINDOWS_VERSION` (10/11) • `MUJO_PROFILE` • `WINDOWS_USERNAME` • `WINDOWS_PASSWORD` (obavezna, ne defaultna) • `WEB_PORT`/`RDP_PORT` • `MUJO_API_TOKEN` (`openssl rand -hex 32`) • `MUJO_API_PORT` • `MUJO_API_BIND` (127.0.0.1 — ne mijenjaj bez TLS-a). `.env` je gitignorean — nikad ga ne commitaj s pravom lozinkom.
+
+> **Blokiran download?** Ako Microsoft blokira automated ISO download s tvoje IP (`ERROR: ... based on your IP address`), stavi vlastiti ISO u `compose/custom-iso.local.yml` (gitignorean, CLI ga automatski dodaje compose listi):
+> ```yaml
+> services:
+>   windows:
+>     volumes:
+>       - /put/do/win11x64.iso:/custom.iso:ro
+> ```
+> `VERSION` se tad ignoriše (dockur pravilo). Dokazano na terenu.
 
 ---
 
