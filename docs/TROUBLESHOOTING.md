@@ -40,9 +40,19 @@ Windows image + volumen rastu na desetine GB. `df -h`; o počisti Docker
 - Restore na drugu `DISK_SIZE` vrijednost: radi, ali particiju eventualno
   proširi ručno u Windows Disk Managementu (dockur napomena).
 
-## Kako izgleda zdrav boot (stvarni log, dockur v6.06)
+## Sleep/restart usred instalacije = počni ispočetka (dokazano iz sourcea)
 
-```
+Provjereno čitanjem dockur `install.sh`/`disk.sh`: dok instalacija nije
+završena (nema boot markera), **svaki restart kontejnera briše nedovršeni
+disk** (`cleanupStorage` → `discardPrevious`) i kreće ispočetka. Završena
+instalacija preživljava reboot normalno (dokazano restore testom).
+Posljedica: host koji spava svakih par minuta (sleep/wake loop) NIKAD neće
+završiti instalaciju — svaki wake je novi ciklus od nule. Za instalaciju
+treba ~1 h neprekidnog awake stanja (punjač, isključen sleep). Znak da si
+u petlji: `Creating a 32 GB growable disk image` + `Booting ... DVD-ROM`
+se ponavljaju u `docker logs`, a `data.img` se ne povećava trajno.
+
+## Kako izgleda zdrav boot (stvarni log, dockur v6.06)```
 ❯ Adding win10x64.xml for automatic installation...
 ❯ Requesting Windows 10 from the Microsoft servers...
 ❯ Downloading Windows 10...
