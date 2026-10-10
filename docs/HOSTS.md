@@ -33,8 +33,10 @@
   WSL IP se mijenja (`hostname -I` u WSL-u); stabilnije rješenje je
   Docker Desktop (sam prosljeđuje portove na Windows).
 - **Sleep ubija duge instalacije**: svaki sleep/wake rebootuje WSL, a time i
-  kontejnere. Za instalaciju treba najmanje ~1 h neprekidnog awake stanja
-  (punjač + isključen sleep ili aktivno korištenje).
+  kontejnere (`docker ps` pokazuje `Up 2 seconds` na svemu nakon buđenja).
+  Za instalaciju treba ~1 h neprekidnog awake stanja (punjač + isključen
+  sleep ili aktivno korištenje). Dokazano: 12+ identičnih ciklusa
+  (overlay → DVD boot → restart) bez napretka dok mašina drijema.
 - **CRLF zamka**: `.env` pisan Windows alatima (Notepad, cmd `echo`)
   dobije `\r` — dockur odbija lozinku (`control characters`) i jede zadnja
   slova. `.env` mora biti LF; `mujowin doctor` upozorava na CRLF.
