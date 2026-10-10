@@ -112,6 +112,9 @@ cmd_doctor() {
   log "Preporuka: profil '$rec' za ovaj host (mujowin profile $rec)."
 
   # Lozinka
+  if grep -q "$(printf '\r')" "$ENV_FILE" 2>/dev/null; then
+    ok=0; warn ".env ima Windows (CRLF) krajeve linija — dockur odbija takve vrijednosti. Konvertuj u LF (npr. dos2unix ili prepiši fajl)."
+  fi
   if [ -z "${WINDOWS_PASSWORD:-}" ]; then
     ok=0; warn "WINDOWS_PASSWORD nije postavljena — 'mujowin up' će se odbiti. Vidi .env.example."
   else

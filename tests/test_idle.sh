@@ -55,7 +55,8 @@ kill $SRV2 2>/dev/null; wait 2>/dev/null || true
 
 # 6. idle bez --check u mocku zove down
 TROOT="$(mktemp -d)"
-if MUJO_MOCK=1 MUJO_ROOT_OVERRIDE="$TROOT" WEB_PORT=18768 RDP_PORT=18769 WINDOWS_PASSWORD=x "$IDLE" 2>&1 | grep -q mock; then ok "idle down mock"; else fail "idle down mock"; fi
+idle_out="$(MUJO_MOCK=1 MUJO_ROOT_OVERRIDE="$TROOT" WEB_PORT=18768 RDP_PORT=18769 WINDOWS_PASSWORD=x "$IDLE" 2>&1 || true)"
+case "$idle_out" in *mock*) ok "idle down mock" ;; *) fail "idle down mock" "$idle_out" ;; esac
 rm -rf "$TROOT"
 
 echo "---"

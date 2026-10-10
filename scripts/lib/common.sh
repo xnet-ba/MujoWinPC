@@ -19,7 +19,7 @@ load_env() {
   while IFS='=' read -r k v; do
     case "$k" in ''|\#*) continue ;; esac
     k="$(printf '%s' "$k" | tr -d '[:space:]')"
-    v="$(printf '%s' "$v" | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
+    v="$(printf '%s' "$v" | tr -d '\r' | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
     case "$k" in WINDOWS_*|MUJO_*|WEB_PORT|RDP_PORT) : ;; *) continue ;; esac
     case "$pre" in *" $k "*) continue ;; esac  # pravi env ostaje, fajl ne gazi
     export "$k=$v"  # unutar fajla zadnja linija pobjeđuje

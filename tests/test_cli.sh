@@ -94,6 +94,13 @@ doc_out="$("$CLI" doctor 2>&1 || true)"
 assert_contains "$doc_out" "Preporuka" "doctor daje preporuku profila"
 assert_contains "$doc_out" "/dev/kvm" "doctor provjerava KVM"
 
+# 12. CRLF .env: doctor upozorava, load_env čisti vrijednost
+TCRLF="$(mktemp -d)"
+printf 'WINDOWS_PASSWORD=abc\r\n' > "$TCRLF/.env"
+crlf_out="$(MUJO_ROOT_OVERRIDE="$TCRLF" "$CLI" doctor 2>&1 || true)"
+assert_contains "$crlf_out" "CRLF" "doctor CRLF upozorenje"
+rm -rf "$TCRLF"
+
 echo "---"
 echo "prošlo: $PASS, palo: $FAIL"
 [ "$FAIL" = 0 ]
